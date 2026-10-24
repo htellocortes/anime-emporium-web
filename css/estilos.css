@@ -346,6 +346,13 @@ footer a { color: var(--texto); text-decoration: none; }
 .dis-acciones { display: flex; flex-wrap: wrap; gap: 10px; }
 .dis-acciones .btn { flex: 1 1 220px; padding: 14px 20px; font-size: 1rem; }
 .dis-nota { color: var(--suave); font-size: .9rem; flex-basis: 100%; }
+.pedir-diseno {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
+  border-top: 1px solid var(--noche-3); padding-top: 14px;
+}
+.pedir-diseno p { color: var(--suave); font-size: .95rem; flex: 1 1 220px; }
+.pedir-diseno strong { color: var(--texto); }
+.pedir-diseno .btn { padding: 10px 16px; font-size: .9rem; }
 .teaser .envoltura { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
 .teaser img { border-radius: 22px; border: 1px solid var(--noche-3); }
 
