@@ -6,10 +6,135 @@
   "ancho": 2316,
   "alto": 1100,
   "fotos": 5,
-  "textos": [],
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Frase de arriba",
+    "ejemplo": "Como Abuela eres la mejor",
+    "patron": "^(.*?\\bcomo)\\s+(.+?)\\s+(eres)\\s+(.+)$",
+    "partes": [
+     {
+      "x": 1207.8,
+      "y": 160.3,
+      "max": 189.4,
+      "tam": 75,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#e4ad27",
+      "mayus": true
+     },
+     {
+      "x": 1220.1,
+      "y": 226.0,
+      "max": 682.1,
+      "tam": 137,
+      "fuente": "{t}px 'Kalam', cursive",
+      "color": "#e4ad27",
+      "mayus": false
+     },
+     {
+      "x": 1216.7,
+      "y": 308.8,
+      "max": 144.3,
+      "tam": 51,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#e4ad27",
+      "mayus": true
+     },
+     {
+      "x": 1206.9,
+      "y": 452.5,
+      "max": 768.9,
+      "tam": 149,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#e4ad27",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 1125.5,
+      "y": 134.3
+     },
+     {
+      "img": "c1.webp",
+      "x": 923.5,
+      "y": 160.8
+     },
+     {
+      "img": "c2.webp",
+      "x": 1153.9,
+      "y": 291.2
+     },
+     {
+      "img": "c3.webp",
+      "x": 872.5,
+      "y": 381.4
+     }
+    ]
+   },
+   {
+    "tipo": "frase",
+    "etiqueta": "Frase de abajo",
+    "ejemplo": "Pero como Madre eres única",
+    "patron": "^(.*?\\bcomo)\\s+(.+?)\\s+(eres\\b.*)$",
+    "partes": [
+     {
+      "x": 1215.7,
+      "y": 545.1,
+      "max": 297.6,
+      "tam": 57,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#e4ad27",
+      "mayus": true
+     },
+     {
+      "x": 1210.3,
+      "y": 641.7,
+      "max": 591.9,
+      "tam": 135,
+      "fuente": "{t}px 'Kalam', cursive",
+      "color": "#042155",
+      "mayus": false
+     },
+     {
+      "x": 1198.5,
+      "y": 770.1,
+      "max": 463.4,
+      "tam": 81,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#042155",
+      "mayus": true
+     }
+    ],
+    "originales": [
+     {
+      "img": "c4.webp",
+      "x": 1086.3,
+      "y": 525.5
+     },
+     {
+      "img": "c5.webp",
+      "x": 952.9,
+      "y": 577.5
+     },
+     {
+      "img": "c6.webp",
+      "x": 997.1,
+      "y": 742.2
+     }
+    ]
+   }
+  ],
   "capas": [
    {
     "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   },
+   {
+    "texto": 1
    },
    {
     "foto": 0,
@@ -36,7 +161,7 @@
     }
    },
    {
-    "img": "c0.webp",
+    "img": "c7.webp",
     "x": 350.0,
     "y": 528.4
    },
@@ -65,7 +190,7 @@
     }
    },
    {
-    "img": "c1.webp",
+    "img": "c8.webp",
     "x": 1799.0,
     "y": 550.0
    },
@@ -94,7 +219,7 @@
     }
    },
    {
-    "img": "c2.webp",
+    "img": "c9.webp",
     "x": 136.3,
     "y": 53.9
    },
@@ -123,7 +248,7 @@
     }
    },
    {
-    "img": "c3.webp",
+    "img": "c10.webp",
     "x": 1767.6,
     "y": 28.4
    },
@@ -152,7 +277,7 @@
     }
    },
    {
-    "img": "c4.webp",
+    "img": "c11.webp",
     "x": 1516.7,
     "y": 408.8
    }
@@ -167,10 +292,135 @@
   "ancho": 2316,
   "alto": 1100,
   "fotos": 5,
-  "textos": [],
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Frase de arriba",
+    "ejemplo": "Como Madre eres la mejor",
+    "patron": "^(.*?\\bcomo)\\s+(.+?)\\s+(eres)\\s+(.+)$",
+    "partes": [
+     {
+      "x": 1241.2,
+      "y": 146.6,
+      "max": 189.4,
+      "tam": 75,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#000000",
+      "mayus": true
+     },
+     {
+      "x": 1236.3,
+      "y": 227.5,
+      "max": 687.7,
+      "tam": 159,
+      "fuente": "{t}px 'Kalam', cursive",
+      "color": "#000000",
+      "mayus": false
+     },
+     {
+      "x": 1229.4,
+      "y": 357.8,
+      "max": 144.3,
+      "tam": 51,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#000000",
+      "mayus": true
+     },
+     {
+      "x": 1216.7,
+      "y": 444.6,
+      "max": 768.9,
+      "tam": 149,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#000000",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 1158.8,
+      "y": 120.6
+     },
+     {
+      "img": "c1.webp",
+      "x": 937.3,
+      "y": 152.0
+     },
+     {
+      "img": "c2.webp",
+      "x": 1166.7,
+      "y": 340.2
+     },
+     {
+      "img": "c3.webp",
+      "x": 882.4,
+      "y": 373.5
+     }
+    ]
+   },
+   {
+    "tipo": "frase",
+    "etiqueta": "Frase de abajo",
+    "ejemplo": "Pero como Abuela eres única",
+    "patron": "^(.*?\\bcomo)\\s+(.+?)\\s+(eres\\b.*)$",
+    "partes": [
+     {
+      "x": 1215.7,
+      "y": 545.1,
+      "max": 297.6,
+      "tam": 57,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#ffffff",
+      "mayus": true
+     },
+     {
+      "x": 1194.6,
+      "y": 638.2,
+      "max": 648.3,
+      "tam": 121,
+      "fuente": "{t}px 'Kalam', cursive",
+      "color": "#ffffff",
+      "mayus": false
+     },
+     {
+      "x": 1198.0,
+      "y": 785.3,
+      "max": 473.5,
+      "tam": 82,
+      "fuente": "{t}px 'Damion', cursive",
+      "color": "#ffffff",
+      "mayus": true
+     }
+    ],
+    "originales": [
+     {
+      "img": "c4.webp",
+      "x": 1086.3,
+      "y": 525.5
+     },
+     {
+      "img": "c5.webp",
+      "x": 912.7,
+      "y": 580.4
+     },
+     {
+      "img": "c6.webp",
+      "x": 992.2,
+      "y": 756.9
+     }
+    ]
+   }
+  ],
   "capas": [
    {
     "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   },
+   {
+    "texto": 1
    },
    {
     "foto": 0,
@@ -197,7 +447,7 @@
     }
    },
    {
-    "img": "c0.webp",
+    "img": "c7.webp",
     "x": 267.6,
     "y": -47.1
    },
@@ -226,7 +476,7 @@
     }
    },
    {
-    "img": "c1.webp",
+    "img": "c8.webp",
     "x": -11.8,
     "y": 333.3
    },
@@ -255,7 +505,7 @@
     }
    },
    {
-    "img": "c2.webp",
+    "img": "c9.webp",
     "x": 335.3,
     "y": 494.1
    },
@@ -284,7 +534,7 @@
     }
    },
    {
-    "img": "c3.webp",
+    "img": "c10.webp",
     "x": 1597.1,
     "y": 461.8
    },
@@ -313,7 +563,7 @@
     }
    },
    {
-    "img": "c4.webp",
+    "img": "c11.webp",
     "x": 1699.0,
     "y": -1.0
    }

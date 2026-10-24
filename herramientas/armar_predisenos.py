@@ -147,11 +147,57 @@ def hueco_interior(alpha_doc):
     return (lab == mejor).astype(np.uint8)
 
 
-def armar_polaroids(ruta, ident, nombre, ocasion, adorno):
+def guardar_capa(a, c):
+    """Guarda una capa sola (recortada) y devuelve {img, x, y, w, h} en coordenadas del diseño."""
+    px = psd.rgba(c)
+    antes = len(a.lista)
+    a.recorte(px, c.caja[0], c.caja[1])
+    item = a.lista.pop() if len(a.lista) > antes else None
+    return item
+
+
+def color_capa(c):
+    px = psd.rgba(c)
+    m = px[..., 3] > 0.9
+    rgb = np.median(px[..., :3][m], axis=0) * 255
+    return "#%02x%02x%02x" % tuple(int(v) for v in rgb)
+
+
+# Fuentes web parecidas a las del PSD (Segoe Script y Brush Script MT no se pueden publicar en la web)
+FUENTE_GRANDE = "{t}px 'Kalam', cursive"
+FUENTE_BRUSH = "{t}px 'Damion', cursive"
+
+
+def frase(a, etiqueta, ejemplo, patron, capas):
+    """capas: lista de (nombre_capa, estilo) con estilo 'grande' (Kalam), 'brush' o 'chica' (Damion en mayúsculas)."""
+    partes, originales = [], []
+    for nombre, estilo in capas:
+        c = a.capa(nombre)
+        l, t, r, b = c.caja
+        w, h = r - l, b - t
+        tam = {"grande": h * 1.05, "brush": h * 1.05, "chica": h * 1.45}[estilo]
+        partes.append({
+            "x": a.esc(l + w / 2), "y": a.esc(t + h / 2), "max": a.esc(w * 1.15), "tam": round(tam * a.s),
+            "fuente": FUENTE_GRANDE if estilo == "grande" else FUENTE_BRUSH,
+            "color": color_capa(c), "mayus": estilo == "chica"})
+        originales.append(guardar_capa(a, c))
+    a.texto({"tipo": "frase", "etiqueta": etiqueta, "ejemplo": ejemplo, "patron": patron,
+             "partes": partes, "originales": originales})
+    return [n for n, _ in capas]
+
+
+P1 = r"^(.*?\bcomo)\s+(.+?)\s+(eres)\s+(.+)$"
+P2 = r"^(.*?\bcomo)\s+(.+?)\s+(eres\b.*)$"
+
+
+def armar_polaroids(ruta, ident, nombre, ocasion, adorno, frases=()):
     a = Armador(ruta, ident, nombre, ocasion)
     pol = [c for c in a.capas if c.nombre.startswith("Capa 5") or c.nombre == "Capa 7"]
-    resto = [c for c in a.capas if c not in pol]
+    usadas = sum((list(n for n, _ in f[3]) for f in frases), [])
+    resto = [c for c in a.capas if c not in pol and c.nombre not in usadas]
     a.imagen_completa(componer(a.info, resto))
+    for f in frases:
+        frase(a, *f)
     for c in pol:                                   # de abajo hacia arriba
         px = psd.rgba(c)
         if adorno:
@@ -209,6 +255,10 @@ def miniaturas(lista, ancho=420):
                 im.alpha_composite(t, (int(round(c.get("x", 0))), int(round(c.get("y", 0)))))
             elif "color" in c:
                 im.paste(c["color"], (0, 0, p["ancho"], p["alto"]))
+            elif "texto" in c and p["textos"][c["texto"]].get("tipo") == "frase":
+                for o in p["textos"][c["texto"]]["originales"]:
+                    t = Image.open(os.path.join(SALIDA, p["id"], o["img"])).convert("RGBA")
+                    im.alpha_composite(t, (int(round(o["x"])), int(round(o["y"]))))
             elif "foto" in c:
                 d = ImageDraw.Draw(im); f = c["forma"]
                 if f["tipo"] == "quad":
@@ -224,8 +274,14 @@ if __name__ == "__main__":
     carpeta = sys.argv[1]
     P = lambda n: os.path.join(carpeta, n)
     lista = []
-    lista.append(armar_polaroids(P("taza_mama_thyare.psd"), "polaroids-noche", "Polaroids · Mamá y Abuela", "Día de la Madre", adorno=False))
-    lista.append(armar_polaroids(P("taza_abuela_thyare.psd"), "polaroids-girasoles", "Girasoles · Mamá y Abuela", "Día de la Madre", adorno=True))
+    lista.append(armar_polaroids(P("taza_mama_thyare.psd"), "polaroids-noche", "Polaroids · Mamá y Abuela", "Día de la Madre", adorno=False, frases=[
+        ("Frase de arriba", "Como Abuela eres la mejor", P1, [("COMO", "chica"), ("Abuela", "grande"), ("ERES", "chica"), ("La mejor", "brush")]),
+        ("Frase de abajo", "Pero como Madre eres única", P2, [("PERO COMO", "chica"), ("Madre", "grande"), ("ERES UNICA", "chica")]),
+    ]))
+    lista.append(armar_polaroids(P("taza_abuela_thyare.psd"), "polaroids-girasoles", "Girasoles · Mamá y Abuela", "Día de la Madre", adorno=True, frases=[
+        ("Frase de arriba", "Como Madre eres la mejor", P1, [("COMO", "chica"), ("Madre", "grande"), ("ERES", "chica"), ("La mejor", "brush")]),
+        ("Frase de abajo", "Pero como Abuela eres única", P2, [("PERO COMO", "chica"), ("Abuela", "grande"), ("ERES UNICA", "chica")]),
+    ]))
     lista.append(armar_marco(P("taza_tio.psd"), "querida-familia", "Querida familia", "Recuerdo",
                              foto="Capa 6", marco_desde="Capa 9", forma_tipo="elipse",
                              textos={
@@ -241,6 +297,8 @@ if __name__ == "__main__":
     for p in lista:
         s = p["alto"] / 1122 if p["id"] == "querida-familia" else 1
         for t in p["textos"]:
+            if t.get("tipo") == "frase":
+                continue
             for k in ("x", "y", "max", "alto"):
                 if k in t: t[k] = round(t[k] * s, 1)
             t["tam"] = round(t["tam"] * s)

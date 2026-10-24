@@ -240,6 +240,11 @@
     var cargas = p.capas.filter(function (c) { return c.img; }).map(function (c) {
       return cargarImagen(p.ruta + c.img).then(function (im) { c.imagen = im; });
     });
+    (p.textos || []).forEach(function (t) {
+      (t.originales || []).forEach(function (o) {
+        cargas.push(cargarImagen(p.ruta + o.img).then(function (im) { o.imagen = im; }));
+      });
+    });
     p.listo = Promise.all(cargas);
     return p.listo;
   }
@@ -290,6 +295,8 @@
         ctx.translate(m.cx, m.cy); ctx.rotate(m.ang);
         foto(ctx, -m.w / 2, -m.h / 2, m.w, m.h, c.foto);
         ctx.restore();
+      } else if (c.texto != null && p.textos[c.texto].tipo === "frase") {
+        dibujarFrase(ctx, p.textos[c.texto], estado.textos[c.texto]);
       } else if (c.texto != null) {
         var t = p.textos[c.texto], valor = texto(c.texto);
         ctx.save();
@@ -303,6 +310,40 @@
         }
         ctx.restore();
       }
+    });
+  }
+
+  // Frases en partes ("como" + palabra grande + "eres" + ...): sin editar se muestra el lettering original;
+  // al editar, la frase se separa con el patrón del prediseño y cada parte va en su lugar y estilo.
+  function partesDeFrase(t, valor) {
+    var m = new RegExp(t.patron, "i").exec(valor.trim().replace(/\s+/g, " "));
+    if (m) return m.slice(1);
+    // no calza con el patrón: toda la frase va en la parte grande principal
+    var partes = t.partes.map(function () { return ""; });
+    var mayor = 0;
+    t.partes.forEach(function (pt, i) { if (!pt.mayus && pt.tam > t.partes[mayor].tam) mayor = i; });
+    partes[mayor] = valor.trim();
+    return partes;
+  }
+
+  function dibujarFrase(ctx, t, valor) {
+    if (!valor) {
+      (t.originales || []).forEach(function (o) {
+        if (o && o.imagen) ctx.drawImage(o.imagen, o.x, o.y, o.imagen.naturalWidth, o.imagen.naturalHeight);
+      });
+      return;
+    }
+    var partes = partesDeFrase(t, valor);
+    t.partes.forEach(function (pt, i) {
+      var txt = (partes[i] || "").trim();
+      if (!txt) return;
+      if (pt.mayus) txt = txt.toUpperCase();
+      else txt = txt.charAt(0).toUpperCase() + txt.slice(1);
+      ctx.save();
+      ctx.fillStyle = pt.color;
+      ctx.textBaseline = "middle";
+      textoAjustado(ctx, txt, pt.x, pt.y, pt.max, pt.tam, pt.fuente, "center");
+      ctx.restore();
     });
   }
 
@@ -459,8 +500,9 @@
   function construirTextos(p) {
     bloqueTextos.hidden = !p.textos.length;
     camposTexto.innerHTML = p.textos.map(function (t, i) {
-      var largo = (t.lineas || 1) > 1 || i === 1 ? 140 : 32;
-      return '<label class="campo" for="texto-' + i + '"><span>' + t.etiqueta + "</span>" +
+      var largo = (t.lineas || 1) > 1 || i === 1 || t.tipo === "frase" ? 140 : 32;
+      var ayuda = t.tipo === "frase" ? '<small class="ayuda">Mantén «como» y «eres» para que quede con el mismo estilo. Si lo dejas vacío, queda la frase original.</small>' : "";
+      return '<label class="campo" for="texto-' + i + '"><span>' + t.etiqueta + "</span>" + ayuda +
         ((t.lineas || 1) > 1
           ? '<textarea id="texto-' + i + '" rows="3" maxlength="' + largo + '" placeholder="' + t.ejemplo.replace(/"/g, "&quot;") + '"></textarea>'
           : '<input type="text" id="texto-' + i + '" maxlength="' + largo + '" autocomplete="off" placeholder="' + t.ejemplo.replace(/"/g, "&quot;") + '">') +
@@ -638,6 +680,7 @@
 
   /* ---------- arranque ---------- */
   var fuentes = ["120px 'Lilita One'", "700 120px 'Dancing Script'", "600 50px 'Cormorant Garamond'",
+    "100px 'Kalam'", "100px 'Damion'",
     "italic 600 50px 'Cormorant Garamond'", "800 50px Nunito"];
   var listasFuentes = Promise.all(fuentes.map(function (f) { return document.fonts.load(f).catch(function () {}); }));
 
