@@ -41,6 +41,14 @@ python herramientas/taza3d.py diseno.png salida.jpg --una
   `python herramientas/taza3d.py blanco assets/img/taza/base.jpg --n 1600 --mapas assets/img/taza`
   Si cambias la cámara o la luz en `taza3d.py`, vuelve a correr ese comando.
 
+## Prediseños desde PSD
+Los prediseños de la tienda (polaroids, Querida familia, Día del Padre, etc.) salen de tus PSD con:
+`python herramientas/armar_predisenos.py carpeta_con_los_psd`
+El script saca las fotos personales y deja huecos donde el cliente pone las suyas. Genera
+`assets/predisenos/<id>/` (fondo, capas con transparencia y miniatura) y `data/predisenos.json`.
+Para agregar un PSD nuevo, añade una llamada a `armar_marco(...)` o `armar_polaroids(...)` al final del script.
+Funciona mejor si la foto personal está en su propia capa (sin combinar con el marco).
+
 ## Probar en local
 El catálogo se carga con `fetch`, así que no funciona abriendo el archivo con doble clic.
 Usa la extensión Live Server de VS Code, o `npx serve .`

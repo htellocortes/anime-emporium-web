@@ -1,7 +1,11 @@
 /* Diseñador de tazas personalizadas.
-   El cliente elige un prediseño, sube su foto y escribe sus textos.
-   El diseño plano (2000 x 1100, proporción de la plantilla de sublimado) se pinta en un canvas
-   y se proyecta sobre la taza 3D usando los mapas generados por herramientas/taza3d.py --mapas.
+   El cliente elige un prediseño, sube sus fotos y escribe sus textos.
+   El diseño plano se pinta en un canvas y se proyecta sobre la taza 3D usando los mapas
+   generados por herramientas/taza3d.py --mapas.
+   Hay dos clases de prediseños:
+   - "dibujados": definidos en este archivo (PLANTILLAS + DIBUJO), lienzo de 2000 x 1100.
+   - "de imagen": hechos desde PSD con herramientas/armar_predisenos.py, listados en
+     data/predisenos.json como capas ordenadas (imágenes, huecos de foto y textos).
    Nada se sube a un servidor: todo pasa en el navegador. */
 (function () {
   "use strict";
@@ -20,46 +24,28 @@
   var vpctx = vistaPlano.getContext("2d");
 
   var estado = {
-    plantilla: "cumple",
-    foto: null,
-    zoom: 1, px: 0.5, py: 0.5,
-    texto1: "", texto2: ""
+    plantilla: null,
+    fotos: [],        // [{img, zoom, px, py}] una por hueco
+    activa: 0,        // hueco de foto que se está editando
+    textos: []
   };
 
-  /* ---------- prediseños ---------- */
+  /* ---------- prediseños dibujados ---------- */
   var PLANTILLAS = {
-    cumple: {
-      nombre: "Cumpleaños",
-      t1: "Valentina", t2: "Que tengas un año lleno de alegría",
-      e1: "Nombre", e2: "Mensaje"
-    },
-    mama: {
-      nombre: "Día de la Madre",
-      t1: "Mamá", t2: "Gracias por todo tu amor",
-      e1: "Para", e2: "Mensaje"
-    },
-    papa: {
-      nombre: "Día del Padre",
-      t1: "Papá", t2: "El mejor del mundo",
-      e1: "Para", e2: "Mensaje"
-    },
-    memoria: {
-      nombre: "En memoria",
-      t1: "Rosa Elena", t2: "1948 – 2025 · Siempre en nuestros corazones",
-      e1: "Nombre", e2: "Fechas o frase"
-    },
-    foto: {
-      nombre: "Foto y frase",
-      t1: "Los mejores amigos", t2: "Desde siempre y para siempre",
-      e1: "Frase", e2: "Segunda línea"
-    },
-    completo: {
-      nombre: "Mi diseño completo",
-      t1: "", t2: "", e1: "", e2: "", sinTexto: true
-    }
+    cumple: { nombre: "Cumpleaños", fotos: 1, textos: [
+      { etiqueta: "Nombre", ejemplo: "Valentina" }, { etiqueta: "Mensaje", ejemplo: "Que tengas un año lleno de alegría" }] },
+    mama: { nombre: "Día de la Madre", fotos: 1, textos: [
+      { etiqueta: "Para", ejemplo: "Mamá" }, { etiqueta: "Mensaje", ejemplo: "Gracias por todo tu amor" }] },
+    papa: { nombre: "Día del Padre", fotos: 1, textos: [
+      { etiqueta: "Para", ejemplo: "Papá" }, { etiqueta: "Mensaje", ejemplo: "El mejor del mundo" }] },
+    memoria: { nombre: "En memoria", fotos: 1, textos: [
+      { etiqueta: "Nombre", ejemplo: "Rosa Elena" }, { etiqueta: "Fechas o frase", ejemplo: "1948 – 2025 · Siempre en nuestros corazones" }] },
+    foto: { nombre: "Foto y frase", fotos: 1, textos: [
+      { etiqueta: "Frase", ejemplo: "Los mejores amigos" }, { etiqueta: "Segunda línea", ejemplo: "Desde siempre y para siempre" }] },
+    completo: { nombre: "Mi diseño completo", fotos: 1, textos: [], completo: true }
   };
+  var ORDEN = [];   // ids en el orden del selector
 
-  // generador pseudoaleatorio con semilla fija, para que el confeti no cambie en cada redibujo
   function azar(semilla) {
     var s = semilla;
     return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
@@ -68,15 +54,15 @@
   function textoAjustado(ctx, texto, x, y, maxAncho, tamano, fuente, alinear) {
     var t = tamano;
     ctx.font = fuente.replace("{t}", t);
-    while (ctx.measureText(texto).width > maxAncho && t > 20) {
-      t -= 4; ctx.font = fuente.replace("{t}", t);
+    while (ctx.measureText(texto).width > maxAncho && t > 16) {
+      t -= 2; ctx.font = fuente.replace("{t}", t);
     }
     ctx.textAlign = alinear || "center";
     ctx.fillText(texto, x, y);
     return t;
   }
 
-  function lineas(ctx, texto, maxAncho) {
+  function lineas(ctx, texto, maxAncho, max) {
     var palabras = texto.split(/\s+/), out = [], linea = "";
     palabras.forEach(function (p) {
       var prueba = linea ? linea + " " + p : p;
@@ -84,35 +70,41 @@
       else linea = prueba;
     });
     if (linea) out.push(linea);
-    return out.slice(0, 3);
+    return out.slice(0, max || 3);
   }
 
-  function parrafo(ctx, texto, x, y, maxAncho, alto, alinear) {
+  function parrafo(ctx, texto, x, y, maxAncho, alto, alinear, max) {
     ctx.textAlign = alinear || "center";
-    lineas(ctx, texto, maxAncho).forEach(function (l, i) { ctx.fillText(l, x, y + i * alto); });
+    lineas(ctx, texto, maxAncho, max).forEach(function (l, i) { ctx.fillText(l, x, y + i * alto); });
   }
 
-  // dibuja la foto (o un marcador) recortada a la forma actual del contexto
-  function foto(ctx, x, y, w, h) {
-    if (estado.foto) {
-      var img = estado.foto;
-      var esc = Math.max(w / img.width, h / img.height) * estado.zoom;
+  function texto(i) {
+    var p = PLANTILLAS[estado.plantilla];
+    return estado.textos[i] || (p.textos[i] && p.textos[i].ejemplo) || "";
+  }
+
+  // Dibuja la foto i (o un marcador) dentro del rectángulo x, y, w, h (ya recortado por el que llama)
+  function foto(ctx, x, y, w, h, i) {
+    var f = estado.fotos[i || 0];
+    if (f && f.img) {
+      var img = f.img;
+      var esc = Math.max(w / img.width, h / img.height) * f.zoom;
       var iw = img.width * esc, ih = img.height * esc;
-      var dx = x + (w - iw) * estado.px;
-      var dy = y + (h - ih) * estado.py;
-      ctx.drawImage(img, dx, dy, iw, ih);
+      ctx.drawImage(img, x + (w - iw) * f.px, y + (h - ih) * f.py, iw, ih);
     } else {
+      var activa = (i || 0) === estado.activa && PLANTILLAS[estado.plantilla].fotos > 1;
       var g = ctx.createLinearGradient(x, y, x, y + h);
-      g.addColorStop(0, "#d9d3e8"); g.addColorStop(1, "#b9b0d0");
+      g.addColorStop(0, activa ? "#f3e4a6" : "#d9d3e8"); g.addColorStop(1, activa ? "#e6cf6f" : "#b9b0d0");
       ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
-      ctx.fillStyle = "#958bb3";
+      ctx.fillStyle = activa ? "#b38f12" : "#958bb3";
       var r = Math.min(w, h);
       ctx.beginPath(); ctx.arc(x + w / 2, y + h * 0.40, r * 0.17, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.ellipse(x + w / 2, y + h * 0.86, r * 0.32, r * 0.25, 0, Math.PI, 0); ctx.fill();
-      ctx.fillStyle = "#6e6490";
+      ctx.fillStyle = activa ? "#6b5200" : "#6e6490";
       ctx.font = "800 " + Math.round(r * 0.075) + "px Nunito, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Tu foto aquí", x + w / 2, y + h * 0.66);
+      var n = PLANTILLAS[estado.plantilla].fotos;
+      ctx.fillText(n > 1 ? "Foto " + ((i || 0) + 1) : "Tu foto aquí", x + w / 2, y + h * 0.66);
     }
   }
 
@@ -228,12 +220,100 @@
     }
   };
 
-  function dibujarPlano(ctx, plantilla) {
-    var p = PLANTILLAS[plantilla];
+  /* ---------- prediseños de imagen ---------- */
+  var imagenes = {};   // ruta -> Promise<Image>
+
+  function cargarImagen(src) {
+    if (!imagenes[src]) {
+      imagenes[src] = new Promise(function (ok, mal) {
+        var im = new Image();
+        im.onload = function () { ok(im); };
+        im.onerror = mal;
+        im.src = src;
+      });
+    }
+    return imagenes[src];
+  }
+
+  function prepararImagenes(p) {
+    if (p.listo) return p.listo;
+    var cargas = p.capas.filter(function (c) { return c.img; }).map(function (c) {
+      return cargarImagen(p.ruta + c.img).then(function (im) { c.imagen = im; });
+    });
+    p.listo = Promise.all(cargas);
+    return p.listo;
+  }
+
+  function trazarForma(ctx, f) {
+    ctx.beginPath();
+    if (f.tipo === "quad") {
+      ctx.moveTo(f.pts[0][0], f.pts[0][1]);
+      for (var i = 1; i < 4; i++) ctx.lineTo(f.pts[i][0], f.pts[i][1]);
+      ctx.closePath();
+    } else {
+      ctx.ellipse(f.cx, f.cy, f.rx, f.ry, f.ang * Math.PI / 180, 0, Math.PI * 2);
+    }
+  }
+
+  // Marco orientado del hueco: centro, ángulo y tamaño, para encuadrar la foto derecha dentro de él
+  function marcoDe(f) {
+    if (f.tipo === "quad") {
+      var p = f.pts;
+      var ang = Math.atan2(p[1][1] - p[0][1], p[1][0] - p[0][0]);
+      // las esquinas pueden venir en cualquier orden: el lado más horizontal manda
+      if (Math.abs(ang) > Math.PI / 4 && Math.abs(ang) < 3 * Math.PI / 4) p = [p[1], p[2], p[3], p[0]];
+      ang = Math.atan2(p[1][1] - p[0][1], p[1][0] - p[0][0]);
+      if (Math.abs(ang) > Math.PI / 2) { p = [p[2], p[3], p[0], p[1]]; ang = Math.atan2(p[1][1] - p[0][1], p[1][0] - p[0][0]); }
+      var w = Math.hypot(p[1][0] - p[0][0], p[1][1] - p[0][1]);
+      var h = Math.hypot(p[2][0] - p[1][0], p[2][1] - p[1][1]);
+      var cx = (p[0][0] + p[1][0] + p[2][0] + p[3][0]) / 4, cy = (p[0][1] + p[1][1] + p[2][1] + p[3][1]) / 4;
+      return { cx: cx, cy: cy, ang: ang, w: w, h: h };
+    }
+    var a = f.ang * Math.PI / 180, rx = f.rx, ry = f.ry;
+    // si la elipse viene girada casi 180° o 90°, se endereza para no dar vuelta la foto
+    while (a > Math.PI / 2) a -= Math.PI;
+    while (a < -Math.PI / 2) a += Math.PI;
+    if (Math.abs(a) > Math.PI / 4) { a = a > 0 ? a - Math.PI / 2 : a + Math.PI / 2; var t = rx; rx = ry; ry = t; }
+    return { cx: f.cx, cy: f.cy, ang: a, w: rx * 2, h: ry * 2 };
+  }
+
+  function dibujarImagen(ctx, p) {
+    p.capas.forEach(function (c) {
+      if (c.color) {
+        ctx.fillStyle = c.color; ctx.fillRect(0, 0, DW, DH);
+      } else if (c.imagen) {
+        ctx.drawImage(c.imagen, c.x || 0, c.y || 0, c.imagen.naturalWidth, c.imagen.naturalHeight);
+      } else if (c.forma) {
+        var m = marcoDe(c.forma);
+        ctx.save();
+        trazarForma(ctx, c.forma); ctx.clip();
+        ctx.translate(m.cx, m.cy); ctx.rotate(m.ang);
+        foto(ctx, -m.w / 2, -m.h / 2, m.w, m.h, c.foto);
+        ctx.restore();
+      } else if (c.texto != null) {
+        var t = p.textos[c.texto], valor = texto(c.texto);
+        ctx.save();
+        ctx.fillStyle = t.color || "#111";
+        ctx.textBaseline = "alphabetic";
+        if ((t.lineas || 1) > 1) {
+          ctx.font = t.fuente.replace("{t}", t.tam);
+          parrafo(ctx, valor, t.x, t.y, t.max, t.alto || t.tam * 1.4, "center", t.lineas);
+        } else {
+          textoAjustado(ctx, valor, t.x, t.y, t.max, t.tam, t.fuente, "center");
+        }
+        ctx.restore();
+      }
+    });
+  }
+
+  function dibujarPlano(ctx, id) {
+    var p = PLANTILLAS[id];
     ctx.save();
-    ctx.clearRect(0, 0, DW, DH);
-    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, DW, DH);
-    DIBUJO[plantilla](ctx, estado.texto1 || p.t1, estado.texto2 || p.t2);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    if (p.capas) dibujarImagen(ctx, p);
+    else DIBUJO[id](ctx, texto(0), texto(1));
     ctx.restore();
   }
 
@@ -250,14 +330,6 @@
     aSRGB[j] = Math.round(255 * (l <= 0.0031308 ? l * 12.92 : 1.055 * Math.pow(l, 1 / 2.4) - 0.055));
   }
 
-  function cargarImagen(src) {
-    return new Promise(function (ok, mal) {
-      var im = new Image();
-      im.onload = function () { ok(im); };
-      im.onerror = mal;
-      im.src = src;
-    });
-  }
   function pixeles(im) {
     var cv = document.createElement("canvas");
     cv.width = im.naturalWidth; cv.height = im.naturalHeight;
@@ -299,10 +371,14 @@
     var dis = pctx.getImageData(0, 0, DW, DH).data;
     var reg = sctx.getImageData(inf.x, inf.y, inf.w, inf.h);
     var d = reg.data, n = inf.w * inf.h, tono = inf.tono;
+    // u del mapa es la fracción de la vuelta completa; el diseño cubre (ancho/alto) * k de ella
+    var fd = inf.k ? inf.k * DW / DH : 1;
     for (var k = 0; k < n; k++) {
       var cob = mapa.cob[k];
       if (cob <= 0) continue;
-      var fx = mapa.u[k] * (DW - 1), fy = mapa.v[k] * (DH - 1);
+      var u = 0.5 - (0.5 - mapa.u[k]) / fd;
+      if (u < 0 || u > 1) continue;          // zona sin imprimir, junto al asa
+      var fx = u * (DW - 1), fy = mapa.v[k] * (DH - 1);
       var x0 = fx | 0, y0 = fy | 0;
       var x1 = x0 < DW - 1 ? x0 + 1 : x0, y1 = y0 < DH - 1 ? y0 + 1 : y0;
       var ax = fx - x0, ay = fy - y0;
@@ -326,8 +402,10 @@
     pendiente = true;
     requestAnimationFrame(function () {
       pendiente = false;
+      var p = PLANTILLAS[estado.plantilla];
+      if (p.capas && !p.cargado) return;     // se redibuja cuando terminen de cargar sus imágenes
       dibujarPlano(pctx, estado.plantilla);
-      vpctx.clearRect(0, 0, vistaPlano.width, vistaPlano.height);
+      vistaPlano.width = 1000; vistaPlano.height = Math.round(1000 * DH / DW);
       vpctx.drawImage(plano, 0, 0, vistaPlano.width, vistaPlano.height);
       if (mapa) proyectar();
     });
@@ -335,55 +413,120 @@
 
   /* ---------- controles ---------- */
   var chipsPlantilla = document.getElementById("plantillas");
-  var inT1 = document.getElementById("texto1"), inT2 = document.getElementById("texto2");
-  var lbT1 = document.getElementById("lbl-texto1"), lbT2 = document.getElementById("lbl-texto2");
+  var camposTexto = document.getElementById("campos-texto");
   var bloqueTextos = document.getElementById("bloque-textos");
+  var selectorFotos = document.getElementById("selector-fotos");
   var inFoto = document.getElementById("foto");
   var zona = document.getElementById("zona-foto");
   var nombreFoto = document.getElementById("nombre-foto");
+  var textoZona = document.getElementById("texto-zona");
   var ajustes = document.getElementById("ajustes-foto");
   var inZoom = document.getElementById("zoom"), inX = document.getElementById("pos-x"), inY = document.getElementById("pos-y");
+  var NOTA_FOTO = nombreFoto.textContent;
 
-  function miniaturas() {
+  function miniaturasDibujadas() {
     var mini = document.createElement("canvas");
-    mini.width = DW; mini.height = DH;
+    mini.width = 2000; mini.height = 1100;
     var mctx = mini.getContext("2d");
-    var guardado = { t1: estado.texto1, t2: estado.texto2 };
-    estado.texto1 = ""; estado.texto2 = "";
+    var guardado = { p: estado.plantilla, t: estado.textos, f: estado.fotos, a: estado.activa };
+    estado.textos = []; estado.fotos = []; estado.activa = -1;
+    var dw = DW, dh = DH; DW = 2000; DH = 1100;
     chipsPlantilla.querySelectorAll("canvas").forEach(function (cv) {
-      dibujarPlano(mctx, cv.getAttribute("data-plantilla"));
+      estado.plantilla = cv.getAttribute("data-plantilla");
+      dibujarPlano(mctx, estado.plantilla);
       cv.getContext("2d").drawImage(mini, 0, 0, cv.width, cv.height);
     });
-    estado.texto1 = guardado.t1; estado.texto2 = guardado.t2;
+    DW = dw; DH = dh;
+    estado.plantilla = guardado.p; estado.textos = guardado.t; estado.fotos = guardado.f; estado.activa = guardado.a;
   }
 
   function construirPlantillas() {
-    chipsPlantilla.innerHTML = Object.keys(PLANTILLAS).map(function (k) {
-      return '<button type="button" class="plantilla" data-plantilla="' + k + '" aria-pressed="' + (k === estado.plantilla) + '">' +
-        '<canvas width="200" height="110" data-plantilla="' + k + '" aria-hidden="true"></canvas>' +
-        "<span>" + PLANTILLAS[k].nombre + "</span></button>";
+    chipsPlantilla.innerHTML = ORDEN.map(function (k) {
+      var p = PLANTILLAS[k];
+      var vista = p.capas
+        ? '<img src="' + p.ruta + p.miniatura + '" alt="" width="420" height="' + Math.round(420 * p.alto / p.ancho) + '" loading="lazy">'
+        : '<canvas width="200" height="110" data-plantilla="' + k + '" aria-hidden="true"></canvas>';
+      var extra = p.fotos > 1 ? '<small>' + p.fotos + " fotos</small>" : "";
+      return '<button type="button" class="plantilla" data-plantilla="' + k + '" aria-pressed="false">' +
+        vista + "<span>" + p.nombre + "</span>" + extra + "</button>";
     }).join("");
     chipsPlantilla.addEventListener("click", function (e) {
       var b = e.target.closest(".plantilla");
-      if (!b) return;
-      elegirPlantilla(b.getAttribute("data-plantilla"));
+      if (b) elegirPlantilla(b.getAttribute("data-plantilla"));
     });
   }
 
+  function construirTextos(p) {
+    bloqueTextos.hidden = !p.textos.length;
+    camposTexto.innerHTML = p.textos.map(function (t, i) {
+      var largo = (t.lineas || 1) > 1 || i === 1 ? 140 : 32;
+      return '<label class="campo" for="texto-' + i + '"><span>' + t.etiqueta + "</span>" +
+        ((t.lineas || 1) > 1
+          ? '<textarea id="texto-' + i + '" rows="3" maxlength="' + largo + '" placeholder="' + t.ejemplo.replace(/"/g, "&quot;") + '"></textarea>'
+          : '<input type="text" id="texto-' + i + '" maxlength="' + largo + '" autocomplete="off" placeholder="' + t.ejemplo.replace(/"/g, "&quot;") + '">') +
+        "</label>";
+    }).join("");
+  }
+  camposTexto.addEventListener("input", function (e) {
+    var m = /^texto-(\d+)$/.exec(e.target.id || "");
+    if (!m) return;
+    estado.textos[+m[1]] = e.target.value.trim();
+    redibujar();
+  });
+
+  function construirSelectorFotos(p) {
+    selectorFotos.hidden = p.fotos < 2;
+    if (p.fotos < 2) { selectorFotos.innerHTML = ""; return; }
+    var html = "";
+    for (var i = 0; i < p.fotos; i++) {
+      var f = estado.fotos[i];
+      html += '<button type="button" class="chip foto-chip' + (f && f.img ? " lista" : "") + '" data-foto="' + i + '" aria-pressed="' + (i === estado.activa) + '">' +
+        (f && f.img ? "✓ " : "") + "Foto " + (i + 1) + "</button>";
+    }
+    selectorFotos.innerHTML = html;
+  }
+  selectorFotos.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-foto]");
+    if (!b) return;
+    activarFoto(+b.getAttribute("data-foto"));
+  });
+
+  function activarFoto(i) {
+    estado.activa = i;
+    var p = PLANTILLAS[estado.plantilla];
+    construirSelectorFotos(p);
+    var f = estado.fotos[i];
+    ajustes.hidden = !(f && f.img);
+    zona.classList.toggle("con-foto", !!(f && f.img));
+    if (f && f.img) {
+      inZoom.value = f.zoom; inX.value = f.px; inY.value = f.py;
+      nombreFoto.textContent = f.nombre;
+      textoZona.innerHTML = "<strong>Cambiar foto" + (p.fotos > 1 ? " " + (i + 1) : "") + "</strong> o arrastra otra aquí";
+    } else {
+      nombreFoto.textContent = NOTA_FOTO;
+      textoZona.innerHTML = "<strong>Elige " + (p.fotos > 1 ? "la foto " + (i + 1) : "una foto") + "</strong> o arrástrala aquí";
+    }
+    redibujar();
+  }
+
   function elegirPlantilla(k) {
+    var p = PLANTILLAS[k];
     estado.plantilla = k;
+    estado.textos = [];
+    // se conservan las fotos ya subidas, recortadas a los huecos del nuevo prediseño
+    estado.fotos = estado.fotos.slice(0, p.fotos);
+    if (estado.activa >= p.fotos) estado.activa = 0;
     chipsPlantilla.querySelectorAll(".plantilla").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-plantilla") === k));
     });
-    var p = PLANTILLAS[k];
-    // cada prediseño parte con sus textos de ejemplo (los campos significan cosas distintas)
-    estado.texto1 = ""; estado.texto2 = "";
-    inT1.value = ""; inT2.value = "";
-    bloqueTextos.hidden = !!p.sinTexto;
-    lbT1.textContent = p.e1; lbT2.textContent = p.e2;
-    inT1.placeholder = p.t1; inT2.placeholder = p.t2;
-    document.getElementById("aviso-completo").hidden = k !== "completo";
-    redibujar();
+    DW = p.capas ? p.ancho : 2000; DH = p.capas ? p.alto : 1100;
+    plano.width = DW; plano.height = DH;
+    construirTextos(p);
+    document.getElementById("aviso-completo").hidden = !p.completo;
+    activarFoto(estado.activa);
+    if (p.capas && !p.cargado) {
+      prepararImagenes(p).then(function () { p.cargado = true; if (estado.plantilla === k) redibujar(); });
+    }
   }
 
   function leerFoto(archivo) {
@@ -391,27 +534,30 @@
       nombreFoto.textContent = "Ese archivo no es una imagen. Prueba con JPG o PNG.";
       return;
     }
+    var i = estado.activa;
     var url = URL.createObjectURL(archivo);
-    cargarImagen(url).then(function (im) {
+    var im = new Image();
+    im.onload = function () {
       // reduce fotos muy grandes para que el diseñador vaya fluido
       var max = 2200, esc = Math.min(1, max / Math.max(im.width, im.height));
       var cv = document.createElement("canvas");
       cv.width = Math.round(im.width * esc); cv.height = Math.round(im.height * esc);
       cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
       URL.revokeObjectURL(url);
-      estado.foto = cv;
-      estado.zoom = 1; estado.px = 0.5; estado.py = 0.5;
-      inZoom.value = 1; inX.value = 0.5; inY.value = 0.5;
-      nombreFoto.textContent = archivo.name;
-      zona.classList.add("con-foto");
-      ajustes.hidden = false;
-      redibujar();
-    }).catch(function () {
-      nombreFoto.textContent = "No pudimos abrir esa imagen. Prueba con otra.";
-    });
+      estado.fotos[i] = { img: cv, zoom: 1, px: 0.5, py: 0.5, nombre: archivo.name };
+      // con varias fotos, pasa sola a la siguiente que falte
+      var p = PLANTILLAS[estado.plantilla], sig = i;
+      for (var k = 1; k <= p.fotos; k++) {
+        var cand = (i + k) % p.fotos;
+        if (!estado.fotos[cand] || !estado.fotos[cand].img) { sig = cand; break; }
+      }
+      activarFoto(p.fotos > 1 && sig !== i ? sig : i);
+    };
+    im.onerror = function () { nombreFoto.textContent = "No pudimos abrir esa imagen. Prueba con otra."; };
+    im.src = url;
   }
 
-  inFoto.addEventListener("change", function () { leerFoto(inFoto.files[0]); });
+  inFoto.addEventListener("change", function () { leerFoto(inFoto.files[0]); inFoto.value = ""; });
   ["dragenter", "dragover"].forEach(function (ev) {
     zona.addEventListener(ev, function (e) { e.preventDefault(); zona.classList.add("arrastrando"); });
   });
@@ -422,11 +568,15 @@
     if (e.dataTransfer && e.dataTransfer.files[0]) leerFoto(e.dataTransfer.files[0]);
   });
 
-  inT1.addEventListener("input", function () { estado.texto1 = inT1.value.trim(); redibujar(); });
-  inT2.addEventListener("input", function () { estado.texto2 = inT2.value.trim(); redibujar(); });
-  inZoom.addEventListener("input", function () { estado.zoom = parseFloat(inZoom.value); redibujar(); });
-  inX.addEventListener("input", function () { estado.px = parseFloat(inX.value); redibujar(); });
-  inY.addEventListener("input", function () { estado.py = parseFloat(inY.value); redibujar(); });
+  function ajuste(prop, input) {
+    input.addEventListener("input", function () {
+      var f = estado.fotos[estado.activa];
+      if (!f) return;
+      f[prop] = parseFloat(input.value);
+      redibujar();
+    });
+  }
+  ajuste("zoom", inZoom); ajuste("px", inX); ajuste("py", inY);
 
   document.querySelectorAll("[data-vista]").forEach(function (b) {
     b.addEventListener("click", function () {
@@ -452,10 +602,10 @@
   function mensajePedido() {
     var p = PLANTILLAS[estado.plantilla];
     var m = "Hola Anime Emporium, quiero una taza personalizada.\nPrediseño: " + p.nombre;
-    if (!p.sinTexto) {
-      m += "\n" + p.e1 + ": " + (estado.texto1 || p.t1);
-      m += "\n" + p.e2 + ": " + (estado.texto2 || p.t2);
-    }
+    p.textos.forEach(function (t, i) { m += "\n" + t.etiqueta + ": " + texto(i); });
+    var faltan = 0;
+    for (var i = 0; i < p.fotos; i++) if (!estado.fotos[i] || !estado.fotos[i].img) faltan++;
+    if (faltan) m += "\n(Me faltan " + faltan + (faltan === 1 ? " foto" : " fotos") + ", te las envío por aquí.)";
     m += "\nTe envío la imagen del diseño.";
     return m;
   }
@@ -487,11 +637,21 @@
   });
 
   /* ---------- arranque ---------- */
-  construirPlantillas();
-  elegirPlantilla(estado.plantilla);
-  var fuentes = ["120px 'Lilita One'", "700 120px 'Dancing Script'", "600 50px 'Cormorant Garamond'", "800 50px Nunito"];
-  Promise.all(fuentes.map(function (f) { return document.fonts.load(f).catch(function () {}); }))
-    .then(function () { miniaturas(); redibujar(); });
+  var fuentes = ["120px 'Lilita One'", "700 120px 'Dancing Script'", "600 50px 'Cormorant Garamond'",
+    "italic 600 50px 'Cormorant Garamond'", "800 50px Nunito"];
+  var listasFuentes = Promise.all(fuentes.map(function (f) { return document.fonts.load(f).catch(function () {}); }));
+
+  fetch("data/predisenos.json").then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+    .then(function (lista) {
+      // primero los prediseños de la tienda, después los dibujados
+      lista.forEach(function (p) { PLANTILLAS[p.id] = p; ORDEN.push(p.id); });
+      Object.keys(PLANTILLAS).forEach(function (k) { if (ORDEN.indexOf(k) === -1) ORDEN.push(k); });
+      construirPlantillas();
+      elegirPlantilla(ORDEN[0]);
+      return listasFuentes;
+    })
+    .then(function () { miniaturasDibujadas(); redibujar(); });
+
   prepararMapa().then(redibujar).catch(function () {
     document.getElementById("error-mapa").hidden = false;
   });

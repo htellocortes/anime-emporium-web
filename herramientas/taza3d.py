@@ -166,8 +166,12 @@ def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None):
     pw = PH * dw / dh
     f = pw / (2 * np.pi * R)                 # fracción de la circunferencia impresa
 
+    # Para los mapas la vista se fija con la proporción estándar 20 x 11 (2000 x 1100),
+    # así la cámara mira siempre el mismo lado de la taza aunque el diseño sea más ancho.
+    f_ang = PH * (2000 / 1100) / (2 * np.pi * R) if mapas else f
+
     def theta_de(xfrac):
-        return np.pi + np.pi * f - xfrac * 2 * np.pi * f
+        return np.pi + np.pi * f_ang - xfrac * 2 * np.pi * f_ang
 
     def angulo_para(xfrac):
         # gira la taza para que la columna xfrac del diseño quede mirando a la cámara (+z)
@@ -351,7 +355,9 @@ def guardar_mapas(carpeta, N, g, imp, ux, vy, luz, espec, K):
     Image.fromarray(a8).save(os.path.join(carpeta, "luz.png"), optimize=True)
     Image.fromarray(b8).save(os.path.join(carpeta, "brillo.png"), optimize=True)
     json.dump({"ancho": n, "x": int(x0), "y": int(y0), "w": int(x1 - x0), "h": int(y1 - y0),
-               "escA": escA, "escB": escB, "tono": 0.22},
+               "escA": escA, "escB": escB, "tono": 0.22,
+               # u del mapa = fracción de la vuelta completa; un diseño de proporción a cubre a * k
+               "k": PH / (2 * np.pi * R)},
               open(os.path.join(carpeta, "mapa.json"), "w"))
 
 
@@ -364,7 +370,9 @@ if __name__ == "__main__":
     ap.add_argument("--mapas", help="carpeta donde guardar los mapas para el diseñador web")
     a = ap.parse_args()
     if a.diseno == "blanco":
-        dis = np.full((1100, 2000, 4), 255, np.uint8)   # proporción de plantilla 20 x 11
+        # vuelta completa: el mapa cubre toda la taza y el navegador lo ajusta a la proporción de cada diseño
+        ancho = int(round(2 * np.pi * R / PH * 1000))
+        dis = np.full((1000, ancho, 4), 255, np.uint8)
     else:
         dis = np.asarray(Image.open(a.diseno).convert("RGBA"))
     render(dis, a.salida, a.fondo, a.una, a.n, a.mapas)

@@ -1,0 +1,490 @@
+[
+ {
+  "id": "polaroids-noche",
+  "nombre": "Polaroids · Mamá y Abuela",
+  "ocasion": "Día de la Madre",
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 5,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       725.0,
+       926.5
+      ],
+      [
+       378.1,
+       908.3
+      ],
+      [
+       396.8,
+       553.4
+      ],
+      [
+       743.7,
+       571.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 350.0,
+    "y": 528.4
+   },
+   {
+    "foto": 1,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       2174.0,
+       948.1
+      ],
+      [
+       1827.1,
+       929.9
+      ],
+      [
+       1845.8,
+       575.0
+      ],
+      [
+       2192.7,
+       593.2
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c1.webp",
+    "x": 1799.0,
+    "y": 550.0
+   },
+   {
+    "foto": 2,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       511.2,
+       452.1
+      ],
+      [
+       164.3,
+       433.8
+      ],
+      [
+       183.1,
+       78.9
+      ],
+      [
+       530.0,
+       97.2
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c2.webp",
+    "x": 136.3,
+    "y": 53.9
+   },
+   {
+    "foto": 3,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       2142.6,
+       426.5
+      ],
+      [
+       1795.7,
+       408.1
+      ],
+      [
+       1814.5,
+       53.3
+      ],
+      [
+       2161.4,
+       71.7
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c3.webp",
+    "x": 1767.6,
+    "y": 28.4
+   },
+   {
+    "foto": 4,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       1827.5,
+       738.8
+      ],
+      [
+       1539.4,
+       723.6
+      ],
+      [
+       1554.9,
+       428.9
+      ],
+      [
+       1843.0,
+       444.1
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c4.webp",
+    "x": 1516.7,
+    "y": 408.8
+   }
+  ],
+  "ruta": "assets/predisenos/polaroids-noche/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "polaroids-girasoles",
+  "nombre": "Girasoles · Mamá y Abuela",
+  "ocasion": "Día de la Madre",
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 5,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       306.9,
+       171.3
+      ],
+      [
+       611.9,
+       66.4
+      ],
+      [
+       732.1,
+       415.9
+      ],
+      [
+       427.1,
+       520.8
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 267.6,
+    "y": -47.1
+   },
+   {
+    "foto": 1,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       71.5,
+       470.1
+      ],
+      [
+       350.3,
+       373.4
+      ],
+      [
+       461.4,
+       693.9
+      ],
+      [
+       182.6,
+       790.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c1.webp",
+    "x": -11.8,
+    "y": 333.3
+   },
+   {
+    "foto": 2,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       428.5,
+       951.8
+      ],
+      [
+       467.1,
+       584.2
+      ],
+      [
+       790.8,
+       618.2
+      ],
+      [
+       752.2,
+       985.8
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c2.webp",
+    "x": 335.3,
+    "y": 494.1
+   },
+   {
+    "foto": 3,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       1660.8,
+       610.2
+      ],
+      [
+       2005.2,
+       588.8
+      ],
+      [
+       2029.5,
+       980.2
+      ],
+      [
+       1685.1,
+       1001.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c3.webp",
+    "x": 1597.1,
+    "y": 461.8
+   },
+   {
+    "foto": 4,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       1757.4,
+       446.2
+      ],
+      [
+       1854.9,
+       63.3
+      ],
+      [
+       2190.3,
+       148.7
+      ],
+      [
+       2092.8,
+       531.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c4.webp",
+    "x": 1699.0,
+    "y": -1.0
+   }
+  ],
+  "ruta": "assets/predisenos/polaroids-girasoles/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "querida-familia",
+  "nombre": "Querida familia",
+  "ocasion": "Recuerdo",
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [
+   {
+    "etiqueta": "Saludo",
+    "ejemplo": "Querida familia:",
+    "x": 1171.6,
+    "y": 284.3,
+    "max": 627.5,
+    "tam": 63,
+    "fuente": "italic 600 {t}px 'Cormorant Garamond', serif",
+    "color": "#151515",
+    "lineas": 1
+   },
+   {
+    "etiqueta": "Mensaje",
+    "ejemplo": "Que esta taza los acompañe en momentos de calma, conversación y risas, como las que siempre compartimos juntos.",
+    "x": 1157.8,
+    "y": 402.0,
+    "max": 686.3,
+    "tam": 45,
+    "fuente": "italic 600 {t}px 'Cormorant Garamond', serif",
+    "color": "#151515",
+    "lineas": 5,
+    "alto": 70.6
+   },
+   {
+    "etiqueta": "Firma",
+    "ejemplo": "Con cariño",
+    "x": 1132.4,
+    "y": 941.2,
+    "max": 294.1,
+    "tam": 59,
+    "fuente": "italic 600 {t}px 'Cormorant Garamond', serif",
+    "color": "#151515",
+    "lineas": 1
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "elipse",
+     "cx": 464.1,
+     "cy": 589.5,
+     "rx": 264.6,
+     "ry": 409.3,
+     "ang": 175.12
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0
+   },
+   {
+    "texto": 0
+   },
+   {
+    "texto": 1
+   },
+   {
+    "texto": 2
+   }
+  ],
+  "ruta": "assets/predisenos/querida-familia/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "papa-cobreloa",
+  "nombre": "Día del Padre · Cobreloa",
+  "ocasion": "Día del Padre",
+  "ancho": 2444,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "color": "#ffffff"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       1447.1,
+       71.7
+      ],
+      [
+       2228.9,
+       71.7
+      ],
+      [
+       2228.9,
+       775.3
+      ],
+      [
+       1447.1,
+       775.3
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0
+   }
+  ],
+  "ruta": "assets/predisenos/papa-cobreloa/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "harry-potter",
+  "nombre": "Mundo mágico",
+  "ocasion": "Fans",
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "quad",
+     "pts": [
+      [
+       1353.9,
+       273.5
+      ],
+      [
+       2183.3,
+       273.5
+      ],
+      [
+       2183.3,
+       801.0
+      ],
+      [
+       1353.9,
+       801.0
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 1336.3,
+    "y": 197.1
+   }
+  ],
+  "ruta": "assets/predisenos/harry-potter/",
+  "miniatura": "miniatura.jpg"
+ }
+]

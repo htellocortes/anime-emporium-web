@@ -12,7 +12,7 @@
 <link rel="icon" href="assets/img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&family=Dancing+Script:wght@700&family=Cormorant+Garamond:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&family=Dancing+Script:wght@700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap">
 <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body data-pagina="personalizados">
@@ -67,10 +67,11 @@
           </fieldset>
 
           <fieldset class="paso">
-            <legend><span class="paso-n">2</span> Sube tu foto</legend>
+            <legend><span class="paso-n">2</span> Sube tus fotos</legend>
+            <div class="chips selector-fotos" id="selector-fotos" role="group" aria-label="Foto que estás editando" hidden></div>
             <label class="zona-foto" id="zona-foto" for="foto">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 4 4 3-3 5 5"/><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/></svg>
-              <span><strong>Elige una foto</strong> o arrástrala aquí</span>
+              <span id="texto-zona"><strong>Elige una foto</strong> o arrástrala aquí</span>
               <small id="nombre-foto">JPG o PNG. Tu foto no sale de tu dispositivo hasta que tú nos la envíes.</small>
             </label>
             <input type="file" id="foto" accept="image/*" class="oculto">
@@ -83,12 +84,7 @@
 
           <fieldset class="paso" id="bloque-textos">
             <legend><span class="paso-n">3</span> Escribe tu mensaje</legend>
-            <label class="campo" for="texto1"><span id="lbl-texto1">Nombre</span>
-              <input type="text" id="texto1" maxlength="28" autocomplete="off">
-            </label>
-            <label class="campo" for="texto2"><span id="lbl-texto2">Mensaje</span>
-              <input type="text" id="texto2" maxlength="70" autocomplete="off">
-            </label>
+            <div class="campos-texto" id="campos-texto"></div>
           </fieldset>
 
           <div class="dis-acciones">
