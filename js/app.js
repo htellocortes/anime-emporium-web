@@ -86,7 +86,11 @@
       a.href = "https://www.instagram.com/" + cfg.instagram + "/";
     });
     document.querySelectorAll("[data-ig-texto]").forEach(function (el) { el.textContent = "@" + cfg.instagram; });
-    document.querySelectorAll("[data-correo]").forEach(function (el) { el.textContent = cfg.correo; });
+    document.querySelectorAll("[data-correo]").forEach(function (el) {
+      el.textContent = cfg.correo;
+      var fila = el.closest(".canal");
+      if (fila && !cfg.correo) fila.hidden = true;
+    });
     document.querySelectorAll("[data-fono]").forEach(function (el) {
       el.textContent = "+" + cfg.whatsapp.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, "$1 $2 $3 $4");
     });
