@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diseña tu taza · Anime Emporium</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Diseña tu taza personalizada: sube tu foto, elige un prediseño para cumpleaños, Día de la Madre, Día del Padre o en memoria, y mírala en 3D al instante.">
+<meta property="og:title" content="Diseña tu taza · Anime Emporium">
+<meta property="og:description" content="Sube tu foto, elige un prediseño y mira tu taza en 3D al instante.">
+<meta property="og:image" content="assets/img/productos/taza-pokemon-venusaur.jpg">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&family=Dancing+Script:wght@700&family=Cormorant+Garamond:wght@600;700&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="personalizados">
+
+<header class="header">
+  <div class="envoltura">
+    <a class="marca" href="index.html" aria-label="Anime Emporium, inicio">
+      <img src="assets/img/logo.png" alt="Anime Emporium" width="300" height="276">
+    </a>
+    <button id="btn-menu" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="nav" class="nav" aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="personalizados.html" aria-current="page">Personalizados</a>
+      <a href="index.html#contacto">Contacto</a>
+      <a class="btn btn-pri" data-wsp href="#" target="_blank" rel="noopener">Hacer un pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="seccion pag">
+    <div class="envoltura">
+      <p class="eyebrow">Personalizados</p>
+      <h1 class="titulo-pag">Diseña tu taza</h1>
+      <p class="intro">Elige un prediseño, sube tu foto y escribe tu mensaje. Ves cómo queda tu taza al instante, y cuando te guste nos la envías por WhatsApp.</p>
+
+      <div class="disenador">
+        <div class="dis-vista">
+          <div class="dis-lienzo">
+            <canvas id="vista-taza" width="800" height="800" aria-label="Vista previa de tu taza"></canvas>
+            <canvas id="vista-plano" width="1000" height="550" aria-label="Diseño plano para imprimir" hidden></canvas>
+          </div>
+          <div class="dis-toggle" role="group" aria-label="Tipo de vista">
+            <button type="button" class="chip" data-vista="taza" aria-pressed="true">Taza 3D</button>
+            <button type="button" class="chip" data-vista="plano" aria-pressed="false">Diseño plano</button>
+          </div>
+          <p class="dis-nota" id="error-mapa" hidden>No pudimos cargar la vista 3D. Revisa el diseño plano o recarga la página.</p>
+        </div>
+
+        <div class="dis-controles">
+          <fieldset class="paso">
+            <legend><span class="paso-n">1</span> Elige un prediseño</legend>
+            <div class="plantillas" id="plantillas"></div>
+            <p class="dis-nota" id="aviso-completo" hidden>Usa esta opción si ya tienes tu diseño listo. Recomendamos una imagen horizontal de 2000 × 1100 px.</p>
+          </fieldset>
+
+          <fieldset class="paso">
+            <legend><span class="paso-n">2</span> Sube tu foto</legend>
+            <label class="zona-foto" id="zona-foto" for="foto">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 4 4 3-3 5 5"/><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/></svg>
+              <span><strong>Elige una foto</strong> o arrástrala aquí</span>
+              <small id="nombre-foto">JPG o PNG. Tu foto no sale de tu dispositivo hasta que tú nos la envíes.</small>
+            </label>
+            <input type="file" id="foto" accept="image/*" class="oculto">
+            <div class="ajustes" id="ajustes-foto" hidden>
+              <label for="zoom">Tamaño <input type="range" id="zoom" min="1" max="3" step="0.01" value="1"></label>
+              <label for="pos-x">Mover a los lados <input type="range" id="pos-x" min="0" max="1" step="0.01" value="0.5"></label>
+              <label for="pos-y">Mover arriba o abajo <input type="range" id="pos-y" min="0" max="1" step="0.01" value="0.5"></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="paso" id="bloque-textos">
+            <legend><span class="paso-n">3</span> Escribe tu mensaje</legend>
+            <label class="campo" for="texto1"><span id="lbl-texto1">Nombre</span>
+              <input type="text" id="texto1" maxlength="28" autocomplete="off">
+            </label>
+            <label class="campo" for="texto2"><span id="lbl-texto2">Mensaje</span>
+              <input type="text" id="texto2" maxlength="70" autocomplete="off">
+            </label>
+          </fieldset>
+
+          <div class="dis-acciones">
+            <button type="button" class="btn btn-wsp" id="btn-pedir">Pedir esta taza por WhatsApp</button>
+            <button type="button" class="btn btn-sec" id="btn-descargar">Descargar diseño</button>
+            <p class="dis-nota" id="estado-accion" aria-live="polite">Te confirmamos el diseño final y el precio por WhatsApp antes de imprimir.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion perso catalogo">
+    <div class="envoltura">
+      <div>
+        <p class="eyebrow">Cómo funciona</p>
+        <h2 class="titulo-sec">De tu idea a tu taza</h2>
+        <p class="intro">Hacemos tazas para regalar en fechas especiales y recuerdos para la familia de quien ya no está, con el cuidado que eso merece. ¿Tienes una idea que no calza con los prediseños? Escríbenos y la diseñamos contigo.</p>
+        <div class="ocasiones-lista">
+          <span>Cumpleaños</span><span>Día de la Madre</span><span>Día del Padre</span><span>En memoria</span><span>Parejas y amigos</span>
+        </div>
+        <a class="btn btn-sec" data-wsp="Hola Anime Emporium, tengo una idea para una taza personalizada" href="#" target="_blank" rel="noopener">Contarles mi idea</a>
+      </div>
+      <ol class="pasos">
+        <li><div><h3>Diseñas o nos cuentas tu idea</h3><p>Usa el diseñador de arriba, o mándanos la foto y el texto por WhatsApp o Instagram.</p></div></li>
+        <li><div><h3>Apruebas el diseño</h3><p>Lo revisamos, te mostramos cómo queda antes de imprimir y ajustamos lo que haga falta.</p></div></li>
+        <li><div><h3>Sublimamos y enviamos</h3><p>Lo producimos y lo despachamos a cualquier parte de Chile.</p></div></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="envoltura">
+    <img src="assets/img/logo.png" alt="Anime Emporium" width="300" height="276">
+    <p>© <span id="anio"></span> Anime Emporium · Envíos a todo Chile · <a data-ig href="#" target="_blank" rel="noopener" data-ig-texto>@animeemporium_cl</a></p>
+  </div>
+</footer>
+
+<a class="flotante" data-wsp href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c.3 2 2.3 4.2 5 5" stroke-linecap="round"/></svg>
+</a>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/disenador.js"></script>
+</body>
+</html>

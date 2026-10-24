@@ -1,11 +1,14 @@
 # Anime Emporium — sitio web
 
-Sitio estático (HTML + CSS + JS, sin build). Tres páginas:
+Sitio estático (HTML + CSS + JS, sin build). Cuatro páginas:
 
 - `index.html` — inicio: destacados, colecciones, personalizados, nosotros y contacto.
 - `catalogo.html` — todos los productos con filtros. Acepta `?coleccion=pokemon` y `?categoria=Tazas`.
 - `producto.html?id=taza-pokemon-bulbasaur` — ficha de cada producto (se arma sola desde el JSON).
   Este es el link que puedes pegar en Instagram para un producto específico.
+- `personalizados.html` — diseñador de tazas: el cliente sube su foto, elige un prediseño, escribe su texto
+  y ve la taza en 3D al instante. Luego la envía por WhatsApp (en celular comparte la imagen directo;
+  en computador la descarga y abre el chat). La foto nunca se sube a un servidor.
 
 ## Editar
 - **Contacto** (WhatsApp, Instagram, correo): `js/config.js`
@@ -29,6 +32,14 @@ python herramientas/taza3d.py diseno.png assets/img/productos/taza-nueva.jpg
 python herramientas/taza3d.py diseno.png salida.jpg --fondo blanco
 python herramientas/taza3d.py diseno.png salida.jpg --una
 ```
+
+## Diseñador de tazas
+- Prediseños: en `js/disenador.js`, objeto `PLANTILLAS` (nombre y textos de ejemplo) y `DIBUJO`
+  (cómo se dibuja cada uno sobre un lienzo de 2000 × 1100, la proporción de la plantilla de sublimado).
+  El lado izquierdo del diseño (x ≈ 540) se ve en la taza izquierda y el derecho (x ≈ 1460) en la derecha.
+- La vista 3D usa los mapas de `assets/img/taza/`, generados con:
+  `python herramientas/taza3d.py blanco assets/img/taza/base.jpg --n 1600 --mapas assets/img/taza`
+  Si cambias la cámara o la luz en `taza3d.py`, vuelve a correr ese comando.
 
 ## Probar en local
 El catálogo se carga con `fetch`, así que no funciona abriendo el archivo con doble clic.

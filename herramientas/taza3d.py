@@ -158,7 +158,7 @@ def entorno(dx, dy, dz, fondo):
 
 
 # ---------- render ----------
-def render(diseno_rgba, salida, fondo="morado", una=False, N=1200):
+def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None):
     dis = srgb_a_lineal(diseno_rgba[..., :3].astype(float))
     alfa = diseno_rgba[..., 3:4].astype(float) / 255
     dis = dis * alfa + 1.0 * (1 - alfa)      # fondo blanco donde sea transparente
@@ -302,11 +302,57 @@ def render(diseno_rgba, salida, fondo="morado", una=False, N=1200):
     img = col.reshape(N, N, 3)
     yy, xx = np.mgrid[0:N, 0:N] / N
     vin = 1 - 0.55 * (((xx - .5) / .75) ** 2 + ((yy - .48) / .7) ** 2)
-    img = img * np.clip(vin, 0.25, 1)[..., None] * 1.05
+    K = np.clip(vin, 0.25, 1) * 1.05
+    if mapas:
+        guardar_mapas(mapas, N, g, imp, ux, vy, luz, espec, K)
+    img = img * K[..., None]
     img = img / (1 + 0.22 * img)                 # compresión suave de altas luces
     img = lineal_a_srgb(img)
     out = Image.fromarray((img * 255 + 0.5).astype(np.uint8)).resize((800, 800), Image.LANCZOS)
     out.save(salida, quality=90, optimize=True, progressive=True)
+
+
+def guardar_mapas(carpeta, N, g, imp, ux, vy, luz, espec, K):
+    """Mapas para el diseñador web: con ellos el navegador pinta cualquier diseño sobre la taza.
+    color = tono(A * lineal(diseño(u, v)) + B), mezclado con base.jpg según la cobertura."""
+    import os, json
+    os.makedirs(carpeta, exist_ok=True)
+    Kf = K.ravel()
+    idx = g[imp]
+    u = np.zeros(N * N); v = np.zeros(N * N); m = np.zeros(N * N)
+    A = np.zeros((N * N, 3)); B = np.zeros((N * N, 3))
+    u[idx] = ux[imp]; v[idx] = vy[imp]; m[idx] = 1
+    A[idx] = luz[imp] * 0.92 * Kf[idx, None]
+    B[idx] = espec[imp] * Kf[idx, None]
+
+    # reduce 2x2 -> 1 promediando solo los pixeles impresos
+    n = N // 2
+    def red(x):
+        return x.reshape((n, 2, n, 2) + x.shape[2:]).sum(axis=(1, 3))
+    m2 = m.reshape(N, N); cnt = red(m2); cov = cnt / 4
+    seguro = np.maximum(cnt, 1)
+    u2 = red((u * m).reshape(N, N)) / seguro
+    v2 = red((v * m).reshape(N, N)) / seguro
+    A2 = red((A * m[:, None]).reshape(N, N, 3)) / seguro[..., None]
+    B2 = red((B * m[:, None]).reshape(N, N, 3)) / seguro[..., None]
+
+    ys, xs = np.where(cov > 0)
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    c = lambda a: a[y0:y1, x0:x1]
+    u16 = np.round(np.clip(c(u2), 0, 1) * 65535).astype(np.uint32)
+    v16 = np.round(np.clip(c(v2), 0, 1) * 65535).astype(np.uint32)
+    uv = np.stack([u16 >> 8, u16 & 255, v16 >> 8], -1).astype(np.uint8)
+    vlo = np.stack([v16 & 255, np.round(c(cov) * 255), np.zeros_like(v16)], -1).astype(np.uint8)
+    escA, escB = 2.0, 4.0
+    a8 = np.round(np.clip(c(A2) / escA, 0, 1) * 255).astype(np.uint8)
+    b8 = np.round(np.clip(c(B2) / escB, 0, 1) * 255).astype(np.uint8)
+    Image.fromarray(uv).save(os.path.join(carpeta, "uv.png"), optimize=True)
+    Image.fromarray(vlo).save(os.path.join(carpeta, "vm.png"), optimize=True)
+    Image.fromarray(a8).save(os.path.join(carpeta, "luz.png"), optimize=True)
+    Image.fromarray(b8).save(os.path.join(carpeta, "brillo.png"), optimize=True)
+    json.dump({"ancho": n, "x": int(x0), "y": int(y0), "w": int(x1 - x0), "h": int(y1 - y0),
+               "escA": escA, "escB": escB, "tono": 0.22},
+              open(os.path.join(carpeta, "mapa.json"), "w"))
 
 
 if __name__ == "__main__":
@@ -315,5 +361,10 @@ if __name__ == "__main__":
     ap.add_argument("--fondo", default="morado", choices=list(FONDOS))
     ap.add_argument("--una", action="store_true")
     ap.add_argument("--n", type=int, default=1200)
+    ap.add_argument("--mapas", help="carpeta donde guardar los mapas para el diseñador web")
     a = ap.parse_args()
-    render(np.asarray(Image.open(a.diseno).convert("RGBA")), a.salida, a.fondo, a.una, a.n)
+    if a.diseno == "blanco":
+        dis = np.full((1100, 2000, 4), 255, np.uint8)   # proporción de plantilla 20 x 11
+    else:
+        dis = np.asarray(Image.open(a.diseno).convert("RGBA"))
+    render(dis, a.salida, a.fondo, a.una, a.n, a.mapas)

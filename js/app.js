@@ -125,6 +125,14 @@
     });
   }
 
+  /* El catálogo se carga después de que el navegador ya saltó al #ancla,
+     así que la página crece y el salto queda corto. Se repite al terminar. */
+  function irAlAncla() {
+    if (!location.hash) return;
+    var el = document.getElementById(location.hash.slice(1));
+    if (el) requestAnimationFrame(function () { el.scrollIntoView(); });
+  }
+
   /* ---------- inicio ---------- */
   function paginaInicio() {
     cargarDatos().then(function (d) {
@@ -142,6 +150,7 @@
           '<span class="col-nombre">' + esc(c.nombre) + (tiene ? "" : " · consultar") + "</span></a>"
         );
       }).join("");
+      irAlAncla();
     }).catch(function () { errorCarga(document.getElementById("grid-destacados")); });
   }
 
