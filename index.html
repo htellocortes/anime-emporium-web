@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anime Emporium</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tazas, carcasas, mousepads y regalos sublimados de anime y personalizados. Pedidos por WhatsApp e Instagram, envíos a todo Chile.">
+<meta property="og:title" content="Anime Emporium">
+<meta property="og:description" content="Tazas, carcasas, mousepads y regalos sublimados de anime y personalizados. Pedidos por WhatsApp e Instagram, envíos a todo Chile.">
+<meta property="og:image" content="assets/img/productos/taza-pokemon-venusaur.jpg">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;800&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body data-pagina="inicio">
+
+<header class="header">
+  <div class="envoltura">
+    <a class="marca" href="index.html" aria-label="Anime Emporium, inicio">
+      <img src="assets/img/logo.png" alt="Anime Emporium" width="300" height="276">
+    </a>
+    <button id="btn-menu" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="nav" class="nav" aria-label="Principal">
+      <a href="index.html" aria-current="page">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="index.html#personalizados">Personalizados</a>
+      <a href="index.html#contacto">Contacto</a>
+      <a class="btn btn-pri" data-wsp href="#" target="_blank" rel="noopener">Hacer un pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="envoltura">
+      <div class="hero-texto">
+        <p class="eyebrow">Sublimados hechos a pedido</p>
+        <h1>Tu anime favorito, <span class="amarillo">en tu taza</span> y en tu celular</h1>
+        <p class="hero-lead">Tazas, carcasas, mousepads y encendedores con diseños de anime o con tus propias fotos. Regalos para cumpleaños, Día de la Madre, Día del Padre y recuerdos para la familia.</p>
+        <div class="hero-cta">
+          <a class="btn btn-pri" href="catalogo.html">Ver catálogo</a>
+          <a class="btn btn-sec" data-ig href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            <span data-ig-texto>@animeemporium_cl</span>
+          </a>
+        </div>
+        <p class="sello">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M2 6h11v10H2zM13 9h4l4 4v3h-8z"/><circle cx="6" cy="17.5" r="1.8" fill="currentColor"/><circle cx="17" cy="17.5" r="1.8" fill="currentColor"/></svg>
+          Envíos a todo Chile
+        </p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <img class="hv-taza" src="assets/img/productos/taza-pokemon-venusaur.jpg" alt="" width="800" height="800">
+        <img class="hv-carcasa" src="assets/img/productos/carcasa-nezuko.jpg" alt="" width="800" height="800">
+      </div>
+    </div>
+  </section>
+
+  <div class="banda" aria-label="Lo que hacemos">
+    <div class="envoltura">
+      <span>Tazas</span><i class="punto"></i>
+      <span>Carcasas</span><i class="punto"></i>
+      <span>Mousepads</span><i class="punto"></i>
+      <span>Encendedores</span><i class="punto"></i>
+      <span>Regalos personalizados</span>
+    </div>
+  </div>
+
+  <section class="seccion catalogo" id="destacados">
+    <div class="envoltura">
+      <div class="cabecera-fila">
+        <div>
+          <p class="eyebrow">Destacados</p>
+          <h2 class="titulo-sec">Lo más pedido</h2>
+        </div>
+        <a class="btn btn-sec" href="catalogo.html">Ver todo el catálogo</a>
+      </div>
+      <div class="grid-prod" id="grid-destacados"></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="colecciones">
+    <div class="envoltura">
+      <p class="eyebrow">Colecciones</p>
+      <h2 class="titulo-sec">Elige tu serie</h2>
+      <p class="intro">Cada colección la llevamos a carcasas, tazas y mousepads. Toca una para ver sus productos o consultar por WhatsApp.</p>
+      <div class="grid-col" id="grid-colecciones"></div>
+    </div>
+  </section>
+
+  <section class="seccion perso" id="personalizados">
+    <div class="envoltura">
+      <div>
+        <p class="eyebrow">Personalizados</p>
+        <h2 class="titulo-sec">Tu foto, tu frase, tu taza</h2>
+        <p class="intro">No solo hacemos anime. Diseñamos tazas para regalar en fechas especiales y recuerdos para la familia de quien ya no está, con el cuidado que eso merece.</p>
+        <div class="ocasiones-lista">
+          <span>Cumpleaños</span><span>Día de la Madre</span><span>Día del Padre</span><span>En memoria</span><span>Parejas y amigos</span>
+        </div>
+        <a class="btn btn-wsp" data-wsp="Hola Anime Emporium, quiero una taza personalizada" href="#" target="_blank" rel="noopener">Cotizar una taza personalizada</a>
+      </div>
+      <ol class="pasos">
+        <li>
+          <div>
+            <h3>Envíanos tu idea</h3>
+            <p>Por WhatsApp o Instagram: la foto, el texto y la ocasión. Si no tienes claro el diseño, te proponemos uno.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Apruebas el diseño</h3>
+            <p>Te mostramos cómo queda antes de imprimir, y ajustamos lo que haga falta.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Sublimamos y enviamos</h3>
+            <p>Lo producimos y lo despachamos a cualquier parte de Chile.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion contacto" id="contacto">
+    <div class="envoltura">
+      <div class="texto">
+        <p class="eyebrow">Nosotros</p>
+        <h2 class="titulo-sec">Hechos por fans</h2>
+        <p>Anime Emporium nació para llevar el anime a objetos de uso diario: tazas, carcasas y mousepads con diseños que creamos nosotros mismos.</p>
+        <p>Con el tiempo empezamos a hacer también regalos personalizados para todo tipo de ocasiones. Vendemos solo online y despachamos a todo Chile.</p>
+      </div>
+      <div class="canales">
+        <a class="canal" data-wsp href="#" target="_blank" rel="noopener">
+          <span class="canal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/></svg></span>
+          <span><small>WhatsApp</small><strong data-fono></strong></span>
+          <span aria-hidden="true">›</span>
+        </a>
+        <a class="canal" data-ig href="#" target="_blank" rel="noopener">
+          <span class="canal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+          <span><small>Instagram</small><strong data-ig-texto>@animeemporium_cl</strong></span>
+          <span aria-hidden="true">›</span>
+        </a>
+        <div class="canal">
+          <span class="canal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+          <span><small>Correo</small><strong data-correo></strong></span>
+          <button class="mini" id="copiar-correo" type="button">Copiar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="envoltura">
+    <img src="assets/img/logo.png" alt="Anime Emporium" width="300" height="276">
+    <p>© <span id="anio"></span> Anime Emporium · Envíos a todo Chile · <a data-ig href="#" target="_blank" rel="noopener" data-ig-texto>@animeemporium_cl</a></p>
+  </div>
+</footer>
+
+<a class="flotante" data-wsp href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c.3 2 2.3 4.2 5 5" stroke-linecap="round"/></svg>
+</a>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

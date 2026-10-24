@@ -1,0 +1,259 @@
+{
+  "categorias": [
+    "Tazas",
+    "Carcasas",
+    "Mousepads",
+    "Encendedores"
+  ],
+  "ocasiones": [
+    "Anime",
+    "Cumpleaños",
+    "Día de la Madre",
+    "Día del Padre",
+    "En memoria",
+    "Personalizado"
+  ],
+  "colecciones": [
+    {
+      "id": "demon-slayer",
+      "nombre": "Demon Slayer",
+      "imagen": "assets/img/colecciones/demon-slayer.jpg"
+    },
+    {
+      "id": "one-piece",
+      "nombre": "One Piece",
+      "imagen": "assets/img/colecciones/one-piece.jpg"
+    },
+    {
+      "id": "pokemon",
+      "nombre": "Pokémon",
+      "imagen": "assets/img/colecciones/pokemon.jpg"
+    },
+    {
+      "id": "kirby",
+      "nombre": "Kirby",
+      "imagen": "assets/img/colecciones/kirby.jpg"
+    },
+    {
+      "id": "liga-chilena",
+      "nombre": "Liga Chilena",
+      "imagen": "assets/img/colecciones/liga-chilena.jpg"
+    }
+  ],
+  "productos": [
+    {
+      "id": "taza-pokemon-bulbasaur",
+      "nombre": "Taza Pokémon Bulbasaur #001",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Anime",
+        "Cumpleaños"
+      ],
+      "coleccion": "pokemon",
+      "descripcion": "Diseño envolvente estilo Pokédex con Bulbasaur, de la primera generación. Taza cerámica blanca sublimada.",
+      "precio": null,
+      "imagen": "assets/img/productos/taza-pokemon-bulbasaur.jpg",
+      "linkPago": null,
+      "destacado": true
+    },
+    {
+      "id": "taza-pokemon-ivysaur",
+      "nombre": "Taza Pokémon Ivysaur #002",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Anime",
+        "Cumpleaños"
+      ],
+      "coleccion": "pokemon",
+      "descripcion": "Diseño envolvente estilo Pokédex con Ivysaur, de la primera generación. Taza cerámica blanca sublimada.",
+      "precio": null,
+      "imagen": "assets/img/productos/taza-pokemon-ivysaur.jpg",
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "taza-pokemon-venusaur",
+      "nombre": "Taza Pokémon Venusaur #003",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Anime",
+        "Cumpleaños"
+      ],
+      "coleccion": "pokemon",
+      "descripcion": "Diseño envolvente estilo Pokédex con Venusaur, de la primera generación. Taza cerámica blanca sublimada.",
+      "precio": null,
+      "imagen": "assets/img/productos/taza-pokemon-venusaur.jpg",
+      "linkPago": null,
+      "destacado": true
+    },
+    {
+      "id": "taza-personalizada",
+      "nombre": "Taza con tu foto o diseño",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Personalizado",
+        "Cumpleaños",
+        "Día de la Madre",
+        "Día del Padre"
+      ],
+      "descripcion": "Taza cerámica blanca sublimada con la foto, frase o diseño que tú elijas.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": true
+    },
+    {
+      "id": "taza-anime",
+      "nombre": "Taza de tu anime favorito",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Anime"
+      ],
+      "descripcion": "Elige el personaje o la serie y armamos el diseño de tu taza.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "taza-cumpleanos",
+      "nombre": "Taza de cumpleaños",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Cumpleaños",
+        "Personalizado"
+      ],
+      "descripcion": "Con nombre, edad y una foto. Un regalo listo para entregar.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "taza-dia-madre",
+      "nombre": "Taza Día de la Madre",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Día de la Madre",
+        "Personalizado"
+      ],
+      "descripcion": "Diseño con fotos familiares y un mensaje para mamá.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "taza-dia-padre",
+      "nombre": "Taza Día del Padre",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "Día del Padre",
+        "Personalizado"
+      ],
+      "descripcion": "Diseño con fotos familiares y un mensaje para papá.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "taza-recuerdo",
+      "nombre": "Taza en memoria",
+      "categoria": "Tazas",
+      "ocasiones": [
+        "En memoria",
+        "Personalizado"
+      ],
+      "descripcion": "Un recuerdo para la familia de un ser querido, con su foto y unas palabras.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "carcasa-nezuko",
+      "nombre": "Carcasa Nezuko",
+      "categoria": "Carcasas",
+      "ocasiones": [
+        "Anime"
+      ],
+      "coleccion": "demon-slayer",
+      "descripcion": "Colección Demon Slayer. Indica el modelo de tu celular al pedir.",
+      "precio": null,
+      "imagen": "assets/img/productos/carcasa-nezuko.jpg",
+      "linkPago": null,
+      "destacado": true
+    },
+    {
+      "id": "carcasa-shinobu",
+      "nombre": "Carcasa Shinobu",
+      "categoria": "Carcasas",
+      "ocasiones": [
+        "Anime"
+      ],
+      "coleccion": "demon-slayer",
+      "descripcion": "Colección Demon Slayer. Indica el modelo de tu celular al pedir.",
+      "precio": null,
+      "imagen": "assets/img/productos/carcasa-shinobu.jpg",
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "carcasa-muichiro",
+      "nombre": "Carcasa Muichiro",
+      "categoria": "Carcasas",
+      "ocasiones": [
+        "Anime"
+      ],
+      "coleccion": "demon-slayer",
+      "descripcion": "Colección Demon Slayer. Indica el modelo de tu celular al pedir.",
+      "precio": null,
+      "imagen": "assets/img/productos/carcasa-muichiro.jpg",
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "carcasa-giyu",
+      "nombre": "Carcasa Giyu",
+      "categoria": "Carcasas",
+      "ocasiones": [
+        "Anime"
+      ],
+      "coleccion": "demon-slayer",
+      "descripcion": "Colección Demon Slayer. Indica el modelo de tu celular al pedir.",
+      "precio": null,
+      "imagen": "assets/img/productos/carcasa-giyu.jpg",
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "mousepad-anime",
+      "nombre": "Mousepad sublimado",
+      "categoria": "Mousepads",
+      "ocasiones": [
+        "Anime",
+        "Personalizado"
+      ],
+      "descripcion": "Con tu personaje favorito o un diseño propio.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "encendedor-anime",
+      "nombre": "Encendedor personalizado",
+      "categoria": "Encendedores",
+      "ocasiones": [
+        "Anime",
+        "Personalizado"
+      ],
+      "descripcion": "Diseños de anime o personalizados.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    }
+  ]
+}
