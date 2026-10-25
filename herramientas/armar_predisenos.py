@@ -60,10 +60,11 @@ def capas_planas(raiz):
 
 
 class Armador:
-    def __init__(self, ruta, ident, nombre, ocasion):
+    def __init__(self, ruta, ident, nombre, categorias):
         self.info, self.raiz, _ = psd.abrir(ruta)
         self.capas = capas_planas(self.raiz)
-        self.id = ident; self.nombre = nombre; self.ocasion = ocasion
+        self.id = ident; self.nombre = nombre
+        self.categorias = [categorias] if isinstance(categorias, str) else list(categorias)
         self.s = ALTO / self.info["alto"]
         self.W = int(round(self.info["ancho"] * self.s))
         self.dir = os.path.join(SALIDA, ident); os.makedirs(self.dir, exist_ok=True)
@@ -112,7 +113,7 @@ class Armador:
 
     def guardar(self):
         # miniatura para el selector
-        return {"id": self.id, "nombre": self.nombre, "ocasion": self.ocasion,
+        return {"id": self.id, "nombre": self.nombre, "categorias": self.categorias,
                 "ancho": self.W, "alto": ALTO, "fotos": self.fotos,
                 "textos": self.textos, "capas": self.lista, "ruta": f"assets/predisenos/{self.id}/"}
 
@@ -190,8 +191,8 @@ P1 = r"^(.*?\bcomo)\s+(.+?)\s+(eres)\s+(.+)$"
 P2 = r"^(.*?\bcomo)\s+(.+?)\s+(eres\b.*)$"
 
 
-def armar_polaroids(ruta, ident, nombre, ocasion, adorno, frases=()):
-    a = Armador(ruta, ident, nombre, ocasion)
+def armar_polaroids(ruta, ident, nombre, categorias, adorno, frases=()):
+    a = Armador(ruta, ident, nombre, categorias)
     pol = [c for c in a.capas if c.nombre.startswith("Capa 5") or c.nombre == "Capa 7"]
     usadas = sum((list(n for n, _ in f[3]) for f in frases), [])
     resto = [c for c in a.capas if c not in pol and c.nombre not in usadas]
@@ -211,9 +212,9 @@ def armar_polaroids(ruta, ident, nombre, ocasion, adorno, frases=()):
     return a.guardar()
 
 
-def armar_marco(ruta, ident, nombre, ocasion, foto, marco_desde, forma_tipo, textos=None, excluir=()):
+def armar_marco(ruta, ident, nombre, categorias, foto, marco_desde, forma_tipo, textos=None, excluir=()):
     """Plantillas con una foto bajo un marco con hueco. foto = nombre de la capa de la foto personal."""
-    a = Armador(ruta, ident, nombre, ocasion)
+    a = Armador(ruta, ident, nombre, categorias)
     i = [c.nombre for c in a.capas].index(foto)
     abajo = [c for c in a.capas[:i] if c.nombre not in excluir]
     arriba = [c for c in a.capas[i + 1:] if c.nombre not in excluir and not (textos and c.nombre in textos)]
@@ -244,6 +245,156 @@ def armar_marco(ruta, ident, nombre, ocasion, foto, marco_desde, forma_tipo, tex
     return a.guardar()
 
 
+def caja(a, c):
+    l, t, r, b = c.caja
+    return [a.esc(l), a.esc(t), a.esc(r - l), a.esc(b - t)]
+
+
+def armar_personaje(ruta, ident, nombre, categorias, grande, mini, debajo_mini, encima_mini, numero, quitar=()):
+    """Plantilla donde el cliente sube un personaje (se le quita el fondo en el navegador).
+    grande: capa del personaje principal; mini: copia chica (ej. pantalla de la Pokédex).
+    debajo_mini / encima_mini: capas que van entre medio. numero: capa de texto editable."""
+    a = Armador(ruta, ident, nombre, categorias)
+    nombres = [c.nombre for c in a.capas]
+    sacar = {grande, mini, numero, *quitar, *encima_mini}
+    abajo = [c for c in a.capas[:nombres.index(mini)] if c.nombre not in sacar]
+    a.imagen_completa(componer(a.info, abajo))
+    a.lista.append({"personaje": 0, "caja": caja(a, a.capa(mini)), "ancla": "centro", "margen": 0.04})
+    for n in encima_mini:
+        guardado = guardar_capa(a, a.capa(n)); a.lista.append(guardado)
+    if numero:
+        c = a.capa(numero); l, t, r, b = c.caja
+        orig = guardar_capa(a, c)
+        a.texto({"tipo": "frase", "etiqueta": "Número", "ejemplo": "002", "patron": "^(.+)$", "max_largo": 4,
+                 "partes": [{"x": a.esc((l + r) / 2), "y": a.esc((t + b) / 2), "max": a.esc((r - l) * 1.6),
+                             "tam": round((b - t) * 1.25 * a.s), "fuente": "800 {t}px 'Nunito', sans-serif",
+                             "color": color_capa(c), "mayus": False}],
+                 "originales": [orig]})
+    cg = a.capa(grande)
+    a.lista.append({"sombra": 0, "caja": caja(a, cg)})
+    a.lista.append({"personaje": 0, "caja": caja(a, cg), "ancla": "abajo", "margen": 0})
+    # imagen de ejemplo (la que trae el PSD) y guías para el cliente
+    px = psd.rgba(cg)
+    ys, xs = np.where(px[..., 3] > 0.02)
+    sub = px[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    ej = Image.fromarray((np.clip(sub, 0, 1) * 255).astype(np.uint8), "RGBA")
+    ej.thumbnail((900, 900), Image.LANCZOS)
+    ej.save(os.path.join(a.dir, "ejemplo.webp"), quality=88, method=6)
+    blanco = Image.new("RGB", ej.size, "white"); blanco.paste(ej, mask=ej.split()[3])
+    blanco.thumbnail((260, 260)); blanco.save(os.path.join(a.dir, "guia-bien.jpg"), quality=85)
+    # mal: el mismo personaje sobre un paisaje (foto con escenario)
+    fondo = Image.open(os.path.join(SALIDA, "polaroids-girasoles", "fondo.jpg")).convert("RGB")
+    fondo = fondo.crop((300, 300, 300 + ej.width, 300 + ej.height)).resize(ej.size)
+    fondo.paste(ej, mask=ej.split()[3]); fondo.thumbnail((260, 260))
+    fondo.save(os.path.join(a.dir, "guia-mal.jpg"), quality=85)
+    r = a.guardar()
+    r["personaje"] = {"ejemplo": "ejemplo.webp", "guia_bien": "guia-bien.jpg", "guia_mal": "guia-mal.jpg"}
+    r["fotos"] = 1
+    return r
+
+
+def capa_por_nombre(raiz, nombre):
+    for _, c in psd.recorrer(raiz):
+        if c.nombre.strip() == nombre and not c.grupo:
+            return c
+    raise KeyError(nombre)
+
+
+def suavizar_mascara(m, cerrar=9, abrir=5):
+    m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_OPEN, np.ones((abrir, abrir), np.uint8))
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((cerrar, cerrar), np.uint8))
+    # rellena agujeros chicos dentro del hueco
+    n, lab, st, _ = cv2.connectedComponentsWithStats((1 - m).astype(np.uint8))
+    H, W = m.shape
+    for k in range(1, n):
+        x, y, w, h, area = st[k]
+        if x > 0 and y > 0 and x + w < W and y + h < H and area < 0.02 * m.sum():
+            m[lab == k] = 1
+    return m
+
+
+def guardar_con_hueco(a, comp_rgb, hueco):
+    """Guarda la imagen compuesta con el hueco transparente (borde suave) y agrega el hueco de foto debajo."""
+    H, W = hueco.shape
+    alfa = 1 - cv2.GaussianBlur(hueco.astype(np.float32), (5, 5), 0)
+    alfa = np.minimum(alfa, 1 - (cv2.erode(hueco, np.ones((3, 3), np.uint8)) > 0))
+    rgba = np.dstack([comp_rgb.astype(np.float32) / 255, alfa])
+    ys, xs = np.where(hueco > 0)
+    x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+    a.lista.append({"foto": a.fotos, "forma": {"tipo": "caja", "pts": [[a.esc(x0), a.esc(y0)], [a.esc(x1), a.esc(y0)], [a.esc(x1), a.esc(y1)], [a.esc(x0), a.esc(y1)]]}})
+    a.fotos += 1
+    return rgba
+
+
+def armar_compuesta_con_foto(ruta, ident, nombre, categorias, capas_foto=("COLOCA TU FOTO AQUI",)):
+    """Plantillas de terceros (ej. SubliPlantillas) en 16 bits: la foto de ejemplo está en una capa
+    recortada por formas vectoriales. Se usa la imagen compuesta del PSD y se abre el hueco donde
+    esa capa es la que se ve."""
+    a = Armador(ruta, ident, nombre, categorias)
+    info, raiz, comp = psd.abrir(ruta)
+    H, W = comp.shape[:2]
+    rgba = None
+    huecos = []
+    for nombre_capa in capas_foto:
+        c = capa_por_nombre(raiz, nombre_capa)
+        px = (psd.rgba(c) * 255)
+        l, t, r, b = c.caja
+        x0, y0, x1, y1 = max(l, 0), max(t, 0), min(r, W), min(b, H)
+        sub = px[y0 - t:y1 - t, x0 - l:x1 - l]
+        dif = np.abs(comp[y0:y1, x0:x1].astype(np.float32) - sub[..., :3]).max(-1)
+        coincide = (dif <= 6) & (sub[..., 3] > 200)
+        m = np.zeros((H, W), np.uint8); m[y0:y1, x0:x1] = coincide
+        huecos.append(suavizar_mascara(m))
+    for h in huecos:
+        rgba = guardar_con_hueco(a, comp, h) if rgba is None else rgba
+    if len(huecos) > 1:
+        tot = np.clip(sum(huecos), 0, 1).astype(np.uint8)
+        rgba[..., 3] = np.minimum(rgba[..., 3], 1 - tot)
+    a.recorte(rgba, 0, 0)
+    a.lista[-1]["entero"] = True
+    return a.guardar()
+
+
+def armar_huecos_blancos(ruta, ident, nombre, categorias, min_area=0.02):
+    """Plantillas que ya traen los huecos de foto en blanco: cada región blanca grande y cerrada es un hueco."""
+    a = Armador(ruta, ident, nombre, categorias)
+    info, raiz, comp = psd.abrir(ruta)
+    H, W = comp.shape[:2]
+    blanco = (comp.min(-1) >= 248).astype(np.uint8)
+    n, lab, st, _ = cv2.connectedComponentsWithStats(blanco)
+    huecos = []
+    for k in range(1, n):
+        x, y, w, h, area = st[k]
+        if area < min_area * W * H or x == 0 or y == 0 or x + w >= W or y + h >= H:
+            continue
+        huecos.append((x, suavizar_mascara(lab == k, 5, 3)))
+    huecos.sort()
+    tot = np.zeros((H, W), np.uint8)
+    for _, h in huecos:
+        guardar_con_hueco(a, comp, h); tot |= h
+    alfa = 1 - cv2.GaussianBlur(tot.astype(np.float32), (5, 5), 0)
+    alfa = np.minimum(alfa, 1 - (cv2.erode(tot, np.ones((3, 3), np.uint8)) > 0))
+    a.recorte(np.dstack([comp.astype(np.float32) / 255, alfa]), 0, 0)
+    a.lista[-1]["entero"] = True
+    return a.guardar()
+
+
+def armar_fijo(ruta, ident, nombre, categorias):
+    """Diseño listo: sin foto ni textos. ruta puede ser PSD o imagen (jpg/png)."""
+    if ruta.lower().endswith(".psd"):
+        info, raiz, comp = psd.abrir(ruta)
+        im = Image.fromarray(comp)
+    else:
+        im = Image.open(ruta).convert("RGB")
+    dest = os.path.join(SALIDA, ident); os.makedirs(dest, exist_ok=True)
+    s = ALTO / im.height
+    W = int(round(im.width * s))
+    im = im.resize((W, ALTO), Image.LANCZOS)
+    im.save(os.path.join(dest, "fondo.jpg"), quality=86, optimize=True, progressive=True)
+    return {"id": ident, "nombre": nombre, "categorias": list(categorias), "ancho": W, "alto": ALTO,
+            "fotos": 0, "textos": [], "capas": [{"img": "fondo.jpg"}], "ruta": f"assets/predisenos/{ident}/", "listo": True}
+
+
 def miniaturas(lista, ancho=420):
     """Vista chica de cada prediseño con los huecos de foto en gris, para el selector."""
     from PIL import ImageDraw
@@ -261,7 +412,7 @@ def miniaturas(lista, ancho=420):
                     im.alpha_composite(t, (int(round(o["x"])), int(round(o["y"]))))
             elif "foto" in c:
                 d = ImageDraw.Draw(im); f = c["forma"]
-                if f["tipo"] == "quad":
+                if f["tipo"] in ("quad", "caja"):
                     d.polygon([tuple(pt) for pt in f["pts"]], fill=(200, 192, 222, 255))
                 else:
                     d.ellipse([f["cx"] - f["rx"], f["cy"] - f["ry"], f["cx"] + f["rx"], f["cy"] + f["ry"]], fill=(200, 192, 222, 255))
@@ -270,30 +421,65 @@ def miniaturas(lista, ancho=420):
         p["miniatura"] = "miniatura.jpg"
 
 
+def _correr(t):
+    f, a, k = t
+    return f(*a, **k)
+
+
+def slug(t):
+    import unicodedata, re
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+
+
 if __name__ == "__main__":
+    import glob
+    from concurrent.futures import ProcessPoolExecutor
     carpeta = sys.argv[1]
     P = lambda n: os.path.join(carpeta, n)
-    lista = []
-    lista.append(armar_polaroids(P("taza_mama_thyare.psd"), "polaroids-noche", "Polaroids · Mamá y Abuela", "Día de la Madre", adorno=False, frases=[
+    con_foto = []   # (funcion, args, kwargs)
+
+    con_foto.append((armar_personaje, (P("ivysaur.psd"), "pokedex", "Tu Pokémon en la Pokédex", ["Pokémon"]),
+                     dict(grande="Capa 7", mini="Capa 7 copia", debajo_mini=(), encima_mini=["Capa 5", "Capa 6"], numero="002", quitar=["sombra"])))
+    con_foto.append((armar_polaroids, (P("taza_mama_thyare.psd"), "polaroids-noche", "Polaroids · Mamá y Abuela", ["Día de la Madre"]), dict(adorno=False, frases=[
         ("Frase de arriba", "Como Abuela eres la mejor", P1, [("COMO", "chica"), ("Abuela", "grande"), ("ERES", "chica"), ("La mejor", "brush")]),
-        ("Frase de abajo", "Pero como Madre eres única", P2, [("PERO COMO", "chica"), ("Madre", "grande"), ("ERES UNICA", "chica")]),
-    ]))
-    lista.append(armar_polaroids(P("taza_abuela_thyare.psd"), "polaroids-girasoles", "Girasoles · Mamá y Abuela", "Día de la Madre", adorno=True, frases=[
+        ("Frase de abajo", "Pero como Madre eres única", P2, [("PERO COMO", "chica"), ("Madre", "grande"), ("ERES UNICA", "chica")])])))
+    con_foto.append((armar_polaroids, (P("taza_abuela_thyare.psd"), "polaroids-girasoles", "Girasoles · Mamá y Abuela", ["Día de la Madre"]), dict(adorno=True, frases=[
         ("Frase de arriba", "Como Madre eres la mejor", P1, [("COMO", "chica"), ("Madre", "grande"), ("ERES", "chica"), ("La mejor", "brush")]),
-        ("Frase de abajo", "Pero como Abuela eres única", P2, [("PERO COMO", "chica"), ("Abuela", "grande"), ("ERES UNICA", "chica")]),
-    ]))
-    lista.append(armar_marco(P("taza_tio.psd"), "querida-familia", "Querida familia", "Recuerdo",
-                             foto="Capa 6", marco_desde="Capa 9", forma_tipo="elipse",
-                             textos={
-                                 "Querida familia:": {"etiqueta": "Saludo", "ejemplo": "Querida familia:", "x": 1195, "y": 290, "max": 640, "tam": 64, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 1},
-                                 "Que esta taza los acompañe  en momentos de calma,  conversación": {"etiqueta": "Mensaje", "ejemplo": "Que esta taza los acompañe en momentos de calma, conversación y risas, como las que siempre compartimos juntos.", "x": 1181, "y": 410, "max": 700, "tam": 46, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 5, "alto": 72},
-                                 "Tamy": {"etiqueta": "Firma", "ejemplo": "Con cariño", "x": 1155, "y": 960, "max": 300, "tam": 60, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 1},
-                             }, excluir=("Kena", "Juana", "Mauricio", "Sebita")))
-    lista.append(armar_marco(P("cobreloa.psd"), "papa-cobreloa", "Día del Padre · Cobreloa", "Día del Padre",
-                             foto="WhatsApp Image 2025-06-08 at 14.28.57", marco_desde="marco", forma_tipo="rect"))
-    lista.append(armar_marco(P("harry.psd"), "harry-potter", "Mundo mágico", "Fans",
-                             foto="foto", marco_desde="Rectángulo 1", forma_tipo="rect_capa"))
-    # Los textos usan coordenadas del PSD: escalarlos
+        ("Frase de abajo", "Pero como Abuela eres única", P2, [("PERO COMO", "chica"), ("Abuela", "grande"), ("ERES UNICA", "chica")])])))
+    for f, i, n in [("FelizDiaMama_05.psd", "mama-flores", "Si las mamás fueran flores"), ("FelizDiaMama_07.psd", "mama-hermosa", "La mamá más hermosa")]:
+        con_foto.append((armar_compuesta_con_foto, (P(f), i, n, ["Día de la Madre"]), {}))
+    con_foto.append((armar_huecos_blancos, (P("Madre_M_a_001.psd"), "mama-3-fotos", "Feliz Día de la Madre · 3 fotos", ["Día de la Madre"]), {}))
+    con_foto.append((armar_huecos_blancos, (P("Madre_M_a_005.psd"), "mama-corazon", "Gracias mamá por tu infinito amor", ["Día de la Madre"]), {}))
+    con_foto.append((armar_marco, (P("taza_tio.psd"), "querida-familia", "Querida familia", ["Familia y recuerdos"]), dict(
+        foto="Capa 6", marco_desde="Capa 9", forma_tipo="elipse", excluir=("Kena", "Juana", "Mauricio", "Sebita"), textos={
+            "Querida familia:": {"etiqueta": "Saludo", "ejemplo": "Querida familia:", "x": 1195, "y": 290, "max": 640, "tam": 64, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 1},
+            "Que esta taza los acompañe  en momentos de calma,  conversación": {"etiqueta": "Mensaje", "ejemplo": "Que esta taza los acompañe en momentos de calma, conversación y risas, como las que siempre compartimos juntos.", "x": 1181, "y": 410, "max": 700, "tam": 46, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 5, "alto": 72},
+            "Tamy": {"etiqueta": "Firma", "ejemplo": "Con cariño", "x": 1155, "y": 960, "max": 300, "tam": 60, "fuente": "italic 600 {t}px 'Cormorant Garamond', serif", "color": "#151515", "lineas": 1}})))
+    con_foto.append((armar_marco, (P("cobreloa.psd"), "papa-cobreloa", "Día del Padre · Cobreloa", ["Día del Padre", "Fútbol chileno"]), dict(
+        foto="WhatsApp Image 2025-06-08 at 14.28.57", marco_desde="marco", forma_tipo="rect")))
+    for f, i, n in [("DragonBall_02.psd", "dbz-foto", "Dragon Ball Z con tu foto"), ("DragonBall_03.psd", "dbs-foto", "Dragon Ball Super con tu foto")]:
+        con_foto.append((armar_compuesta_con_foto, (P(f), i, n, ["Dragon Ball"]), {}))
+    for f, i, n in [("Naruto_01.psd", "naruto-foto-1", "Naruto con tu foto · Kunai"), ("Naruto_02.psd", "naruto-foto-2", "Naruto con tu foto · Shippuden"), ("Naruto_03.psd", "naruto-foto-3", "Naruto con tu foto · Manga")]:
+        con_foto.append((armar_compuesta_con_foto, (P(f), i, n, ["Naruto"]), {}))
+    con_foto.append((armar_marco, (P("harry.psd"), "harry-potter", "Mundo mágico", ["Películas y series"]), dict(foto="foto", marco_desde="Rectángulo 1", forma_tipo="rect_capa")))
+
+    # Diseños listos: cada archivo dentro de listos/<Categoría>/ (psd, jpg o png). El nombre del archivo es el nombre del diseño.
+    listos = []
+    for ruta in sorted(glob.glob(os.path.join(carpeta, "listos", "*", "*"))):
+        if os.path.splitext(ruta)[1].lower() not in (".psd", ".jpg", ".jpeg", ".png", ".webp"):
+            continue
+        cat = os.path.basename(os.path.dirname(ruta)); nom = os.path.splitext(os.path.basename(ruta))[0]
+        listos.append((armar_fijo, (ruta, slug(cat) + "-" + slug(nom), nom, [cat]), {}))
+
+    trabajos = con_foto + listos
+    # la guía del personaje usa el fondo de girasoles: ese se arma primero
+    previo = {t[1][1]: _correr(t) for t in con_foto if t[1][1] == "polaroids-girasoles"}
+    resto = [t for t in trabajos if t[1][1] not in previo]
+    with ProcessPoolExecutor(6) as ex:
+        hechos = dict(zip([t[1][1] for t in resto], ex.map(_correr, resto)))
+    hechos.update(previo)
+    lista = [hechos[t[1][1]] for t in trabajos]
     for p in lista:
         s = p["alto"] / 1122 if p["id"] == "querida-familia" else 1
         for t in p["textos"]:
@@ -305,4 +491,4 @@ if __name__ == "__main__":
     miniaturas(lista)
     dest = os.path.join(os.path.dirname(__file__), "..", "data", "predisenos.json")
     json.dump(lista, open(dest, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("listo:", [p["id"] for p in lista])
+    print("listo:", len(lista), "prediseños,", sum(1 for p in lista if p["fotos"]), "con foto")

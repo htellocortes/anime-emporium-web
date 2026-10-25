@@ -158,7 +158,7 @@ def entorno(dx, dy, dz, fondo):
 
 
 # ---------- render ----------
-def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None):
+def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None, centro=0.72):
     dis = srgb_a_lineal(diseno_rgba[..., :3].astype(float))
     alfa = diseno_rgba[..., 3:4].astype(float) / 255
     dis = dis * alfa + 1.0 * (1 - alfa)      # fondo blanco donde sea transparente
@@ -178,7 +178,7 @@ def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None):
         return np.pi / 2 - theta_de(xfrac)
 
     if una:
-        tazas = [(0.0, 0.0, angulo_para(0.72))]
+        tazas = [(0.0, 0.0, angulo_para(centro))]
         cam = np.array([0.0, 3.4, 10.5]); mira = np.array([0.2, 1.10, 0.0]); fov = 0.24
     else:
         tazas = [(-1.18, -0.15, angulo_para(0.27)), (1.18, 0.20, angulo_para(0.73))]
@@ -368,6 +368,7 @@ if __name__ == "__main__":
     ap.add_argument("--una", action="store_true")
     ap.add_argument("--n", type=int, default=1200)
     ap.add_argument("--mapas", help="carpeta donde guardar los mapas para el diseñador web")
+    ap.add_argument("--centro", type=float, default=0.72, help="con --una: qué parte del diseño mira al frente (0.5 = el centro)")
     a = ap.parse_args()
     if a.diseno == "blanco":
         # vuelta completa: el mapa cubre toda la taza y el navegador lo ajusta a la proporción de cada diseño
@@ -375,4 +376,4 @@ if __name__ == "__main__":
         dis = np.full((1000, ancho, 4), 255, np.uint8)
     else:
         dis = np.asarray(Image.open(a.diseno).convert("RGBA"))
-    render(dis, a.salida, a.fondo, a.una, a.n, a.mapas)
+    render(dis, a.salida, a.fondo, a.una, a.n, a.mapas, a.centro)

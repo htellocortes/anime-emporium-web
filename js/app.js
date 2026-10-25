@@ -37,7 +37,8 @@
       Tazas: '<rect x="34" y="34" width="60" height="68" rx="8"/><path d="M94 50h8a14 14 0 0 1 0 28h-8" fill="none" stroke-width="7"/>',
       Carcasas: '<rect x="42" y="22" width="52" height="92" rx="12"/><rect x="50" y="30" width="18" height="18" rx="5" class="hueco"/>',
       Mousepads: '<rect x="20" y="40" width="96" height="62" rx="10"/><ellipse cx="88" cy="70" rx="10" ry="15" class="hueco"/>',
-      Encendedores: '<rect x="50" y="44" width="36" height="66" rx="6"/><rect x="54" y="26" width="28" height="18" rx="3" class="hueco"/>'
+      Encendedores: '<rect x="50" y="44" width="36" height="66" rx="6"/><rect x="54" y="26" width="28" height="18" rx="3" class="hueco"/>',
+      "Vasos cerveceros": '<path d="M40 24h56l-6 88a6 6 0 0 1-6 5H52a6 6 0 0 1-6-5z"/><path d="M48 36h40" class="hueco" stroke-width="5"/>'
     };
     return '<svg class="ph" viewBox="0 0 136 136" aria-hidden="true">' + (formas[categoria] || formas.Tazas) + "</svg>";
   }

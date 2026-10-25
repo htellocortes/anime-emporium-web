@@ -3,7 +3,8 @@
     "Tazas",
     "Carcasas",
     "Mousepads",
-    "Encendedores"
+    "Encendedores",
+    "Vasos cerveceros"
   ],
   "ocasiones": [
     "Anime",
@@ -250,6 +251,21 @@
         "Personalizado"
       ],
       "descripcion": "Diseños de anime o personalizados.",
+      "precio": null,
+      "imagen": null,
+      "linkPago": null,
+      "destacado": false
+    },
+    {
+      "id": "vaso-cervecero",
+      "nombre": "Vaso cervecero empavonado",
+      "categoria": "Vasos cerveceros",
+      "ocasiones": [
+        "Día del Padre",
+        "Personalizado",
+        "Anime"
+      ],
+      "descripcion": "Vaso de vidrio empavonado con tu diseño, frase o personaje.",
       "precio": null,
       "imagen": null,
       "linkPago": null,

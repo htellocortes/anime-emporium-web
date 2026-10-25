@@ -5,5 +5,5 @@ window.AE_CONFIG = {
   whatsapp: "56995338220",
   instagram: "animeemporium_cl",
   // Correo de contacto. Si queda vacío, la fila de correo no se muestra.
-  correo: ""
+  correo: "theanimemporiumst@gmail.com"
 };

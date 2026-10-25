@@ -46,19 +46,36 @@ def abrir(ruta):
     r.leer(r.u32())                     # image resources
     largo_lm = r.u64() if psb else r.u32()
     fin_lm = r.p + largo_lm
-    capas = []
+    capas = None
     if largo_lm:
         largo_li = r.u64() if psb else r.u32()
-        if largo_li:
+        fin_li = r.p + largo_li
+        if largo_li and prof == 8:
             capas = leer_capas(r, psb)
+        r.p = fin_li
+        if capas is None and r.p < fin_lm:
+            largo_gm = r.u32(); r.p += largo_gm          # global layer mask info
+            while r.p + 12 <= fin_lm:
+                firma = r.leer(4)
+                if firma not in (b"8BIM", b"8B64"):
+                    break
+                clave = r.leer(4)
+                largo = r.u64() if (psb and clave in (b"Lr16", b"Lr32", b"Layr")) else r.u32()
+                ini = r.p
+                if clave in (b"Lr16", b"Lr32"):
+                    capas = leer_capas(r, psb, prof)
+                    break
+                r.p = ini + largo + (largo % 4 and 4 - largo % 4 or 0) * 0
+    if capas is None:                    # sin capas legibles (por ej. 16 bits): solo la imagen compuesta
+        capas = Capa(); capas.nombre = "raiz"; capas.grupo = True
     r.p = fin_lm
     # imagen compuesta
     comp = r.u16()
-    compuesta = leer_canales_imagen(r, comp, canales, ancho, alto, psb)
+    compuesta = leer_canales_imagen(r, comp, canales, ancho, alto, psb, prof)
     return info, capas, compuesta
 
 
-def leer_capas(r, psb):
+def leer_capas(r, psb, prof=8):
     n = r.i16(); n = abs(n)
     capas = []
     for _ in range(n):
@@ -113,38 +130,50 @@ def leer_capas(r, psb):
             else:
                 cw, ch = w, h
             if cw > 0 and ch > 0:
-                c.px[cid] = decodificar(r, comp, cw, ch, ini + largo, psb)
+                c.px[cid] = decodificar(r, comp, cw, ch, ini + largo, psb, prof)
             r.p = ini + largo
     return armar_arbol(capas)
 
 
-def decodificar(r, comp, w, h, fin, psb):
+def decodificar(r, comp, w, h, fin, psb, prof=8):
+    bpp = prof // 8
+    fila = w * bpp
+    def a8(buf):
+        if bpp == 1:
+            return np.frombuffer(buf, np.uint8)[: w * h].reshape(h, w).copy()
+        return (np.frombuffer(buf, ">u2")[: w * h].reshape(h, w) >> 8).astype(np.uint8)
     if comp == 0:
-        return np.frombuffer(r.leer(w * h), np.uint8).reshape(h, w)
+        return a8(r.leer(fila * h))
     if comp == 1:
         conteos = [r.u32() if psb else r.u16() for _ in range(h)]
-        filas = []
-        for cnt in conteos:
-            filas.append(packbits(r.leer(cnt), w))
-        return np.frombuffer(b"".join(filas), np.uint8).reshape(h, w)
+        return a8(b"".join(packbits(r.leer(cnt), fila) for cnt in conteos))
     datos = zlib.decompress(r.leer(fin - r.p))
-    a = np.frombuffer(datos, np.uint8)[: w * h].reshape(h, w).copy()
     if comp == 3:
-        a = np.cumsum(a, axis=1, dtype=np.uint8)
-    return a
+        if bpp == 1:
+            a = np.frombuffer(datos, np.uint8)[: w * h].reshape(h, w)
+            return np.cumsum(a, axis=1, dtype=np.uint8)
+        a = np.frombuffer(datos, ">u2")[: w * h].reshape(h, w).astype(np.uint16)
+        a = np.cumsum(a, axis=1, dtype=np.uint16)
+        return (a >> 8).astype(np.uint8)
+    return a8(datos)
 
 
-def leer_canales_imagen(r, comp, canales, w, h, psb):
+def leer_canales_imagen(r, comp, canales, w, h, psb, prof=8):
+    bpp = prof // 8
+    fila = w * bpp
+    def a8(buf):
+        a = np.frombuffer(buf, np.uint8 if bpp == 1 else ">u2").reshape(h, w)
+        return a if bpp == 1 else (a >> 8).astype(np.uint8)
     if comp == 1:
         conteos = [r.u32() if psb else r.u16() for _ in range(h * canales)]
         planos = []
-        for k in range(canales):
-            filas = [packbits(r.leer(cnt), w) for cnt in conteos[k * h:(k + 1) * h]]
-            planos.append(np.frombuffer(b"".join(filas), np.uint8).reshape(h, w))
-        return np.stack(planos[:3], -1)
+        for k in range(min(canales, 3)):
+            filas = [packbits(r.leer(cnt), fila) for cnt in conteos[k * h:(k + 1) * h]]
+            planos.append(a8(b"".join(filas)))
+        return np.stack(planos, -1)
     if comp == 0:
-        planos = [np.frombuffer(r.leer(w * h), np.uint8).reshape(h, w) for _ in range(canales)]
-        return np.stack(planos[:3], -1)
+        planos = [a8(r.leer(fila * h)) for _ in range(min(canales, 3))]
+        return np.stack(planos, -1)
     return None
 
 

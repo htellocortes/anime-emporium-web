@@ -1,8 +1,103 @@
 [
  {
+  "id": "pokedex",
+  "nombre": "Tu Pokémon en la Pokédex",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2000,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Número",
+    "ejemplo": "002",
+    "patron": "^(.+)$",
+    "max_largo": 4,
+    "partes": [
+     {
+      "x": 1864.2,
+      "y": 73.2,
+      "max": 93.5,
+      "tam": 26,
+      "fuente": "800 {t}px 'Nunito', sans-serif",
+      "color": "#ffffff",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c2.webp",
+      "x": 1835.0,
+      "y": 62.7
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "personaje": 0,
+    "caja": [
+     178.7,
+     773.1,
+     136.3,
+     127.9
+    ],
+    "ancla": "centro",
+    "margen": 0.04
+   },
+   {
+    "img": "c0.webp",
+    "x": 105.0,
+    "y": 670.7
+   },
+   {
+    "img": "c1.webp",
+    "x": 1798.6,
+    "y": 45.7
+   },
+   {
+    "texto": 0
+   },
+   {
+    "sombra": 0,
+    "caja": [
+     1070.4,
+     236.3,
+     875.6,
+     821.4
+    ]
+   },
+   {
+    "personaje": 0,
+    "caja": [
+     1070.4,
+     236.3,
+     875.6,
+     821.4
+    ],
+    "ancla": "abajo",
+    "margen": 0
+   }
+  ],
+  "ruta": "assets/predisenos/pokedex/",
+  "personaje": {
+   "ejemplo": "ejemplo.webp",
+   "guia_bien": "guia-bien.jpg",
+   "guia_mal": "guia-mal.jpg"
+  },
+  "miniatura": "miniatura.jpg"
+ },
+ {
   "id": "polaroids-noche",
   "nombre": "Polaroids · Mamá y Abuela",
-  "ocasion": "Día de la Madre",
+  "categorias": [
+   "Día de la Madre"
+  ],
   "ancho": 2316,
   "alto": 1100,
   "fotos": 5,
@@ -288,7 +383,9 @@
  {
   "id": "polaroids-girasoles",
   "nombre": "Girasoles · Mamá y Abuela",
-  "ocasion": "Día de la Madre",
+  "categorias": [
+   "Día de la Madre"
+  ],
   "ancho": 2316,
   "alto": 1100,
   "fotos": 5,
@@ -572,9 +669,239 @@
   "miniatura": "miniatura.jpg"
  },
  {
+  "id": "mama-flores",
+  "nombre": "Si las mamás fueran flores",
+  "categorias": [
+   "Día de la Madre"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       189.2,
+       100.1
+      ],
+      [
+       1097.6,
+       100.1
+      ],
+      [
+       1097.6,
+       1008.4
+      ],
+      [
+       189.2,
+       1008.4
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/mama-flores/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "mama-hermosa",
+  "nombre": "La mamá más hermosa",
+  "categorias": [
+   "Día de la Madre"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       159.9,
+       61.0
+      ],
+      [
+       1253.8,
+       61.0
+      ],
+      [
+       1253.8,
+       1048.7
+      ],
+      [
+       159.9,
+       1048.7
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/mama-hermosa/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "mama-3-fotos",
+  "nombre": "Feliz Día de la Madre · 3 fotos",
+  "categorias": [
+   "Día de la Madre"
+  ],
+  "ancho": 2380,
+  "alto": 1100,
+  "fotos": 3,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       170.9,
+       278.4
+      ],
+      [
+       850.4,
+       278.4
+      ],
+      [
+       850.4,
+       958.9
+      ],
+      [
+       170.9,
+       958.9
+      ]
+     ]
+    }
+   },
+   {
+    "foto": 1,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       872.5,
+       278.4
+      ],
+      [
+       1494.5,
+       278.4
+      ],
+      [
+       1494.5,
+       933.0
+      ],
+      [
+       872.5,
+       933.0
+      ]
+     ]
+    }
+   },
+   {
+    "foto": 2,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       1527.1,
+       280.3
+      ],
+      [
+       2203.8,
+       280.3
+      ],
+      [
+       2203.8,
+       957.0
+      ],
+      [
+       1527.1,
+       957.0
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/mama-3-fotos/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "mama-corazon",
+  "nombre": "Gracias mamá por tu infinito amor",
+  "categorias": [
+   "Día de la Madre"
+  ],
+  "ancho": 2380,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       85.4,
+       128.6
+      ],
+      [
+       950.3,
+       128.6
+      ],
+      [
+       950.3,
+       916.7
+      ],
+      [
+       85.4,
+       916.7
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/mama-corazon/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
   "id": "querida-familia",
   "nombre": "Querida familia",
-  "ocasion": "Recuerdo",
+  "categorias": [
+   "Familia y recuerdos"
+  ],
   "ancho": 2316,
   "alto": 1100,
   "fotos": 1,
@@ -650,7 +977,10 @@
  {
   "id": "papa-cobreloa",
   "nombre": "Día del Padre · Cobreloa",
-  "ocasion": "Día del Padre",
+  "categorias": [
+   "Día del Padre",
+   "Fútbol chileno"
+  ],
   "ancho": 2444,
   "alto": 1100,
   "fotos": 1,
@@ -693,9 +1023,236 @@
   "miniatura": "miniatura.jpg"
  },
  {
+  "id": "dbz-foto",
+  "nombre": "Dragon Ball Z con tu foto",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       778.9,
+       78.1
+      ],
+      [
+       1695.8,
+       78.1
+      ],
+      [
+       1695.8,
+       970.6
+      ],
+      [
+       778.9,
+       970.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/dbz-foto/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dbs-foto",
+  "nombre": "Dragon Ball Super con tu foto",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       0.0,
+       116.0
+      ],
+      [
+       996.2,
+       116.0
+      ],
+      [
+       996.2,
+       965.7
+      ],
+      [
+       0.0,
+       965.7
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/dbs-foto/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "naruto-foto-1",
+  "nombre": "Naruto con tu foto · Kunai",
+  "categorias": [
+   "Naruto"
+  ],
+  "ancho": 2440,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       162.6,
+       142.1
+      ],
+      [
+       981.4,
+       142.1
+      ],
+      [
+       981.4,
+       984.3
+      ],
+      [
+       162.6,
+       984.3
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/naruto-foto-1/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "naruto-foto-2",
+  "nombre": "Naruto con tu foto · Shippuden",
+  "categorias": [
+   "Naruto"
+  ],
+  "ancho": 2440,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       802.7,
+       127.4
+      ],
+      [
+       1647.8,
+       127.4
+      ],
+      [
+       1647.8,
+       972.6
+      ],
+      [
+       802.7,
+       972.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/naruto-foto-2/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "naruto-foto-3",
+  "nombre": "Naruto con tu foto · Manga",
+  "categorias": [
+   "Naruto"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       743.5,
+       73.3
+      ],
+      [
+       1700.7,
+       73.3
+      ],
+      [
+       1700.7,
+       992.6
+      ],
+      [
+       743.5,
+       992.6
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0,
+    "entero": true
+   }
+  ],
+  "ruta": "assets/predisenos/naruto-foto-3/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
   "id": "harry-potter",
   "nombre": "Mundo mágico",
-  "ocasion": "Fans",
+  "categorias": [
+   "Películas y series"
+  ],
   "ancho": 2316,
   "alto": 1100,
   "fotos": 1,
@@ -735,6 +1292,1032 @@
    }
   ],
   "ruta": "assets/predisenos/harry-potter/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "attack-on-titan-eren-y-levi",
+  "nombre": "Eren y Levi",
+  "categorias": [
+   "Attack on Titan"
+  ],
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/attack-on-titan-eren-y-levi/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "attack-on-titan-la-muralla",
+  "nombre": "La muralla",
+  "categorias": [
+   "Attack on Titan"
+  ],
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/attack-on-titan-la-muralla/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "attack-on-titan-levi",
+  "nombre": "Levi",
+  "categorias": [
+   "Attack on Titan"
+  ],
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/attack-on-titan-levi/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "attack-on-titan-titan-acorazado",
+  "nombre": "Titán Acorazado",
+  "categorias": [
+   "Attack on Titan"
+  ],
+  "ancho": 2316,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/attack-on-titan-titan-acorazado/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dragon-ball-dragon-ball-z",
+  "nombre": "Dragon Ball Z",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/dragon-ball-dragon-ball-z/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dragon-ball-goku-nino",
+  "nombre": "Goku niño",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2314,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/dragon-ball-goku-nino/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dragon-ball-goku-y-shenlong",
+  "nombre": "Goku y Shenlong",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/dragon-ball-goku-y-shenlong/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dragon-ball-maestro-roshi",
+  "nombre": "Maestro Roshi",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2314,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/dragon-ball-maestro-roshi/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "dragon-ball-super-saiyajin",
+  "nombre": "Super Saiyajin",
+  "categorias": [
+   "Dragon Ball"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/dragon-ball-super-saiyajin/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-audax-italiano",
+  "nombre": "Audax Italiano",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-audax-italiano/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-cobreloa",
+  "nombre": "Cobreloa",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-cobreloa/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-colo-colo",
+  "nombre": "Colo-Colo",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-colo-colo/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-everton",
+  "nombre": "Everton",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-everton/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-palestino",
+  "nombre": "Palestino",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-palestino/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-santiago-wanderers",
+  "nombre": "Santiago Wanderers",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-santiago-wanderers/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-universidad-catolica",
+  "nombre": "Universidad Católica",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-universidad-catolica/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-universidad-de-chile",
+  "nombre": "Universidad de Chile",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-universidad-de-chile/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "futbol-chileno-union-espanola",
+  "nombre": "Unión Española",
+  "categorias": [
+   "Fútbol chileno"
+  ],
+  "ancho": 2687,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/futbol-chileno-union-espanola/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-gojo-ojos-azules",
+  "nombre": "Gojo ojos azules",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-gojo-ojos-azules/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-gojo-rojo-y-azul",
+  "nombre": "Gojo rojo y azul",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-gojo-rojo-y-azul/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-hechiceros-de-jujutsu",
+  "nombre": "Hechiceros de Jujutsu",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-hechiceros-de-jujutsu/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-jujutsu-kaisen-batalla",
+  "nombre": "Jujutsu Kaisen batalla",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-jujutsu-kaisen-batalla/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-jujutsu-kaisen-vitral",
+  "nombre": "Jujutsu Kaisen vitral",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-jujutsu-kaisen-vitral/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "jujutsu-kaisen-sukuna",
+  "nombre": "Sukuna",
+  "categorias": [
+   "Jujutsu Kaisen"
+  ],
+  "ancho": 2310,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/jujutsu-kaisen-sukuna/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-ban",
+  "nombre": "Ban",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-ban/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-diane",
+  "nombre": "Diane",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-diane/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-escanor",
+  "nombre": "Escanor",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-escanor/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-gowther",
+  "nombre": "Gowther",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-gowther/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-king",
+  "nombre": "King",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-king/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-meliodas",
+  "nombre": "Meliodas",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-meliodas/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "los-7-pecados-capitales-merlin",
+  "nombre": "Merlin",
+  "categorias": [
+   "Los 7 Pecados Capitales"
+  ],
+  "ancho": 2431,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/los-7-pecados-capitales-merlin/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "naruto-naruto-evolucion",
+  "nombre": "Naruto evolución",
+  "categorias": [
+   "Naruto"
+  ],
+  "ancho": 2223,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/naruto-naruto-evolucion/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-ace",
+  "nombre": "Ace",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-ace/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-brook",
+  "nombre": "Brook",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-brook/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-collage-one-piece",
+  "nombre": "Collage One Piece",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-collage-one-piece/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-law",
+  "nombre": "Law",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-law/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-luffy-gatling",
+  "nombre": "Luffy Gatling",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-luffy-gatling/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-luffy-gear-5",
+  "nombre": "Luffy Gear 5",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2489,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-luffy-gear-5/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-luffy-bandera",
+  "nombre": "Luffy bandera",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-luffy-bandera/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-luffy-y-los-mugiwara",
+  "nombre": "Luffy y los Mugiwara",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-luffy-y-los-mugiwara/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-luffy",
+  "nombre": "Luffy",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-luffy/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-mihawk",
+  "nombre": "Mihawk",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-mihawk/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-zoro-tesoro",
+  "nombre": "Zoro tesoro",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-zoro-tesoro/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "one-piece-zoro",
+  "nombre": "Zoro",
+  "categorias": [
+   "One Piece"
+  ],
+  "ancho": 2200,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/one-piece-zoro/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "pokemon-bulbasaur-go",
+  "nombre": "Bulbasaur GO",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/pokemon-bulbasaur-go/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "pokemon-charizard",
+  "nombre": "Charizard",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2291,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/pokemon-charizard/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "pokemon-charmander-go",
+  "nombre": "Charmander GO",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/pokemon-charmander-go/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "pokemon-pikachu-go",
+  "nombre": "Pikachu GO",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/pokemon-pikachu-go/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "pokemon-squirtle-go",
+  "nombre": "Squirtle GO",
+  "categorias": [
+   "Pokémon"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/pokemon-squirtle-go/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "sailor-moon-artemis",
+  "nombre": "Artemis",
+  "categorias": [
+   "Sailor Moon"
+  ],
+  "ancho": 2258,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/sailor-moon-artemis/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "sailor-moon-luna",
+  "nombre": "Luna",
+  "categorias": [
+   "Sailor Moon"
+  ],
+  "ancho": 2258,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/sailor-moon-luna/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "sailor-moon-sailor-moon-y-luna",
+  "nombre": "Sailor Moon y Luna",
+  "categorias": [
+   "Sailor Moon"
+  ],
+  "ancho": 2258,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/sailor-moon-sailor-moon-y-luna/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "sailor-moon-sailor-venus",
+  "nombre": "Sailor Venus",
+  "categorias": [
+   "Sailor Moon"
+  ],
+  "ancho": 2258,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/sailor-moon-sailor-venus/",
+  "listo": true,
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "sailor-moon-tuxedo-mask",
+  "nombre": "Tuxedo Mask",
+  "categorias": [
+   "Sailor Moon"
+  ],
+  "ancho": 2258,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/sailor-moon-tuxedo-mask/",
+  "listo": true,
   "miniatura": "miniatura.jpg"
  }
 ]

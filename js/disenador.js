@@ -12,7 +12,8 @@
 
   var cfg = window.AE_CONFIG || {};
   var DW = 2000, DH = 1100;
-  var RUTA = "assets/img/taza/";
+  var RUTAS = { lados: "assets/img/taza/", frente: "assets/img/taza-frente/" };
+  var vista = "lados";
 
   var plano = document.createElement("canvas");
   plano.width = DW; plano.height = DH;
@@ -32,17 +33,17 @@
 
   /* ---------- prediseños dibujados ---------- */
   var PLANTILLAS = {
-    cumple: { nombre: "Cumpleaños", fotos: 1, textos: [
+    cumple: { nombre: "Cumpleaños", categorias: ["Cumpleaños"], fotos: 1, textos: [
       { etiqueta: "Nombre", ejemplo: "Valentina" }, { etiqueta: "Mensaje", ejemplo: "Que tengas un año lleno de alegría" }] },
-    mama: { nombre: "Día de la Madre", fotos: 1, textos: [
+    mama: { nombre: "Día de la Madre", categorias: ["Día de la Madre"], fotos: 1, textos: [
       { etiqueta: "Para", ejemplo: "Mamá" }, { etiqueta: "Mensaje", ejemplo: "Gracias por todo tu amor" }] },
-    papa: { nombre: "Día del Padre", fotos: 1, textos: [
+    papa: { nombre: "Día del Padre", categorias: ["Día del Padre"], fotos: 1, textos: [
       { etiqueta: "Para", ejemplo: "Papá" }, { etiqueta: "Mensaje", ejemplo: "El mejor del mundo" }] },
-    memoria: { nombre: "En memoria", fotos: 1, textos: [
+    memoria: { nombre: "En memoria", categorias: ["Familia y recuerdos"], fotos: 1, textos: [
       { etiqueta: "Nombre", ejemplo: "Rosa Elena" }, { etiqueta: "Fechas o frase", ejemplo: "1948 – 2025 · Siempre en nuestros corazones" }] },
-    foto: { nombre: "Foto y frase", fotos: 1, textos: [
+    foto: { nombre: "Foto y frase", categorias: ["Cumpleaños", "Familia y recuerdos"], fotos: 1, textos: [
       { etiqueta: "Frase", ejemplo: "Los mejores amigos" }, { etiqueta: "Segunda línea", ejemplo: "Desde siempre y para siempre" }] },
-    completo: { nombre: "Mi diseño completo", fotos: 1, textos: [], completo: true }
+    completo: { nombre: "Mi diseño completo", categorias: ["Tu propio diseño"], fotos: 1, textos: [], completo: true }
   };
   var ORDEN = [];   // ids en el orden del selector
 
@@ -236,22 +237,25 @@
   }
 
   function prepararImagenes(p) {
-    if (p.listo) return p.listo;
+    if (p._carga) return p._carga;
     var cargas = p.capas.filter(function (c) { return c.img; }).map(function (c) {
       return cargarImagen(p.ruta + c.img).then(function (im) { c.imagen = im; });
     });
+    if (p.personaje) {
+      cargas.push(cargarImagen(p.ruta + p.personaje.ejemplo).then(function (im) { p.ejemploImg = im; }));
+    }
     (p.textos || []).forEach(function (t) {
       (t.originales || []).forEach(function (o) {
         cargas.push(cargarImagen(p.ruta + o.img).then(function (im) { o.imagen = im; }));
       });
     });
-    p.listo = Promise.all(cargas);
-    return p.listo;
+    p._carga = Promise.all(cargas);
+    return p._carga;
   }
 
   function trazarForma(ctx, f) {
     ctx.beginPath();
-    if (f.tipo === "quad") {
+    if (f.tipo === "quad" || f.tipo === "caja") {
       ctx.moveTo(f.pts[0][0], f.pts[0][1]);
       for (var i = 1; i < 4; i++) ctx.lineTo(f.pts[i][0], f.pts[i][1]);
       ctx.closePath();
@@ -262,7 +266,7 @@
 
   // Marco orientado del hueco: centro, ángulo y tamaño, para encuadrar la foto derecha dentro de él
   function marcoDe(f) {
-    if (f.tipo === "quad") {
+    if (f.tipo === "quad" || f.tipo === "caja") {
       var p = f.pts;
       var ang = Math.atan2(p[1][1] - p[0][1], p[1][0] - p[0][0]);
       // las esquinas pueden venir en cualquier orden: el lado más horizontal manda
@@ -282,9 +286,48 @@
     return { cx: f.cx, cy: f.cy, ang: a, w: rx * 2, h: ry * 2 };
   }
 
+  // Personaje recortado (ej. el Pokémon del cliente): se ajusta dentro de su caja sin deformarlo.
+  function imagenPersonaje(p) {
+    var f = estado.fotos[0];
+    if (f && f.recorte) return f.recorte;
+    return p.ejemploImg || null;
+  }
+  function cajaAjustada(img, caja, ancla, margen) {
+    var x = caja[0], y = caja[1], w = caja[2], h = caja[3];
+    var mw = w * (1 - 2 * (margen || 0)), mh = h * (1 - 2 * (margen || 0));
+    var f = estado.fotos[0], zoom = f && f.recorte ? f.zoom : 1;
+    var esc = Math.min(mw / img.width, mh / img.height) * zoom;
+    var iw = img.width * esc, ih = img.height * esc;
+    var dx = (f && f.recorte ? (f.px - 0.5) : 0) * w, dy = (f && f.recorte ? (f.py - 0.5) : 0) * h;
+    var ix = x + (w - iw) / 2 + dx;
+    var iy = (ancla === "abajo" ? y + h - ih - (h - mh) / 2 : y + (h - ih) / 2) + dy;
+    return { x: ix, y: iy, w: iw, h: ih };
+  }
+  function dibujarSombra(ctx, img, r) {
+    // silueta aplastada en el suelo, como la sombra del PSD original
+    var cv = document.createElement("canvas");
+    cv.width = Math.max(1, Math.round(r.w)); cv.height = Math.max(1, Math.round(r.h));
+    var c2 = cv.getContext("2d");
+    c2.drawImage(img, 0, 0, cv.width, cv.height);
+    c2.globalCompositeOperation = "source-in";
+    c2.fillStyle = "rgba(20, 30, 40, 1)"; c2.fillRect(0, 0, cv.width, cv.height);
+    ctx.save();
+    ctx.globalAlpha = 0.32;
+    try { ctx.filter = "blur(" + Math.round(r.h * 0.03) + "px)"; } catch (e) {}
+    ctx.translate(r.x + r.w * 0.5, r.y + r.h);
+    ctx.transform(1, 0, -0.9, 0.2, 0, 0);
+    ctx.drawImage(cv, -r.w * 0.5, -r.h, r.w, r.h);
+    ctx.restore();
+  }
+
   function dibujarImagen(ctx, p) {
+    var img = p.personaje ? imagenPersonaje(p) : null;
     p.capas.forEach(function (c) {
-      if (c.color) {
+      if (c.personaje != null) {
+        if (img) { var r = cajaAjustada(img, c.caja, c.ancla, c.margen); ctx.drawImage(img, r.x, r.y, r.w, r.h); }
+      } else if (c.sombra != null) {
+        if (img) dibujarSombra(ctx, img, cajaAjustada(img, c.caja, "abajo", 0));
+      } else if (c.color) {
         ctx.fillStyle = c.color; ctx.fillRect(0, 0, DW, DH);
       } else if (c.imagen) {
         ctx.drawImage(c.imagen, c.x || 0, c.y || 0, c.imagen.naturalWidth, c.imagen.naturalHeight);
@@ -359,7 +402,7 @@
   }
 
   /* ---------- proyección sobre la taza ---------- */
-  var mapa = null;
+  var mapa = null, mapas = {};
   var aLineal = new Float32Array(256);
   for (var i = 0; i < 256; i++) {
     var c = i / 255;
@@ -379,8 +422,10 @@
     return cx.getImageData(0, 0, cv.width, cv.height).data;
   }
 
-  function prepararMapa() {
-    return fetch(RUTA + "mapa.json").then(function (r) { return r.json(); }).then(function (info) {
+  function prepararMapa(cual) {
+    if (mapas[cual]) return mapas[cual];
+    var RUTA = RUTAS[cual];
+    mapas[cual] = fetch(RUTA + "mapa.json").then(function (r) { return r.json(); }).then(function (info) {
       return Promise.all(["base.jpg", "uv.png", "vm.png", "luz.png", "brillo.png"].map(function (n) {
         return cargarImagen(RUTA + n);
       })).then(function (ims) {
@@ -401,9 +446,16 @@
             m.B[k * 3 + ch] = br[q + ch] / 255 * info.escB;
           }
         }
-        mapa = m;
+        return m;
       });
     });
+    return mapas[cual];
+  }
+  function usarVista(cual) {
+    vista = cual;
+    if (cual === "plano") return;
+    prepararMapa(cual).then(function (m) { if (vista === cual) { mapa = m; redibujar(); } })
+      .catch(function () { document.getElementById("error-mapa").hidden = false; });
   }
 
   function proyectar() {
@@ -464,6 +516,14 @@
   var ajustes = document.getElementById("ajustes-foto");
   var inZoom = document.getElementById("zoom"), inX = document.getElementById("pos-x"), inY = document.getElementById("pos-y");
   var NOTA_FOTO = nombreFoto.textContent;
+  var chipsCategoria = document.getElementById("categorias");
+  var bloqueFotos = document.getElementById("bloque-fotos");
+  var guiaPersonaje = document.getElementById("guia-personaje");
+  var ajusteFondo = document.getElementById("ajuste-fondo");
+  var inFondo = document.getElementById("quitar-fondo"), inTolerancia = document.getElementById("tolerancia");
+  var avisoListo = document.getElementById("aviso-listo");
+  var filtro = { categoria: "Con tu foto" };
+  var CON_FOTO = "Con tu foto", TODOS = "Todos";
 
   function miniaturasDibujadas() {
     var mini = document.createElement("canvas");
@@ -481,13 +541,48 @@
     estado.plantilla = guardado.p; estado.textos = guardado.t; estado.fotos = guardado.f; estado.activa = guardado.a;
   }
 
+  function categorias() {
+    var cuenta = {};
+    ORDEN.forEach(function (k) { (PLANTILLAS[k].categorias || []).forEach(function (c) { cuenta[c] = (cuenta[c] || 0) + 1; }); });
+    // ocasiones primero, después las series en orden alfabético
+    var ocasiones = ["Día de la Madre", "Día del Padre", "Cumpleaños", "Familia y recuerdos", "Tu propio diseño"];
+    var resto = Object.keys(cuenta).filter(function (c) { return ocasiones.indexOf(c) === -1; }).sort(function (a, b) { return a.localeCompare(b, "es"); });
+    return [CON_FOTO, TODOS].concat(ocasiones.filter(function (c) { return cuenta[c]; }), resto).map(function (c) {
+      var n = c === TODOS ? ORDEN.length : c === CON_FOTO ? ORDEN.filter(function (k) { return PLANTILLAS[k].fotos > 0; }).length : cuenta[c];
+      return { nombre: c, n: n };
+    });
+  }
+  function construirCategorias() {
+    chipsCategoria.innerHTML = categorias().map(function (c) {
+      return '<button type="button" class="chip" data-categoria="' + c.nombre + '" aria-pressed="' + (c.nombre === filtro.categoria) + '">' +
+        c.nombre + ' <small>' + c.n + "</small></button>";
+    }).join("");
+  }
+  chipsCategoria.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-categoria]");
+    if (!b) return;
+    filtro.categoria = b.getAttribute("data-categoria");
+    construirCategorias(); filtrarPlantillas();
+  });
+  function pasaFiltro(p) {
+    if (filtro.categoria === TODOS) return true;
+    if (filtro.categoria === CON_FOTO) return p.fotos > 0;
+    return (p.categorias || []).indexOf(filtro.categoria) !== -1;
+  }
+  function filtrarPlantillas() {
+    chipsPlantilla.querySelectorAll(".plantilla").forEach(function (b) {
+      b.hidden = !pasaFiltro(PLANTILLAS[b.getAttribute("data-plantilla")]);
+    });
+  }
+
   function construirPlantillas() {
+    construirCategorias();
     chipsPlantilla.innerHTML = ORDEN.map(function (k) {
       var p = PLANTILLAS[k];
       var vista = p.capas
         ? '<img src="' + p.ruta + p.miniatura + '" alt="" width="420" height="' + Math.round(420 * p.alto / p.ancho) + '" loading="lazy">'
         : '<canvas width="200" height="110" data-plantilla="' + k + '" aria-hidden="true"></canvas>';
-      var extra = p.fotos > 1 ? '<small>' + p.fotos + " fotos</small>" : "";
+      var extra = p.fotos > 1 ? '<small>' + p.fotos + " fotos</small>" : p.personaje ? "<small>Sube tu personaje</small>" : p.fotos === 0 ? '<small class="listo">Diseño listo</small>' : "";
       return '<button type="button" class="plantilla" data-plantilla="' + k + '" aria-pressed="false">' +
         vista + "<span>" + p.nombre + "</span>" + extra + "</button>";
     }).join("");
@@ -495,6 +590,7 @@
       var b = e.target.closest(".plantilla");
       if (b) elegirPlantilla(b.getAttribute("data-plantilla"));
     });
+    filtrarPlantillas();
   }
 
   function construirTextos(p) {
@@ -543,11 +639,13 @@
     if (f && f.img) {
       inZoom.value = f.zoom; inX.value = f.px; inY.value = f.py;
       nombreFoto.textContent = f.nombre;
-      textoZona.innerHTML = "<strong>Cambiar foto" + (p.fotos > 1 ? " " + (i + 1) : "") + "</strong> o arrastra otra aquí";
+      textoZona.innerHTML = "<strong>Cambiar " + (p.personaje ? "imagen" : "foto" + (p.fotos > 1 ? " " + (i + 1) : "")) + "</strong> o arrastra otra aquí";
     } else {
       nombreFoto.textContent = NOTA_FOTO;
-      textoZona.innerHTML = "<strong>Elige " + (p.fotos > 1 ? "la foto " + (i + 1) : "una foto") + "</strong> o arrástrala aquí";
+      textoZona.innerHTML = p.personaje ? "<strong>Sube la imagen de tu personaje</strong> o arrástrala aquí"
+        : "<strong>Elige " + (p.fotos > 1 ? "la foto " + (i + 1) : "una foto") + "</strong> o arrástrala aquí";
     }
+    ajusteFondo.hidden = !(p.personaje && f && f.img);
     redibujar();
   }
 
@@ -556,7 +654,9 @@
     estado.plantilla = k;
     estado.textos = [];
     // se conservan las fotos ya subidas, recortadas a los huecos del nuevo prediseño
-    estado.fotos = estado.fotos.slice(0, p.fotos);
+    var antes = PLANTILLAS[estado.anterior];
+    estado.fotos = (antes && !!antes.personaje !== !!p.personaje) ? [] : estado.fotos.slice(0, p.fotos);
+    estado.anterior = k;
     if (estado.activa >= p.fotos) estado.activa = 0;
     chipsPlantilla.querySelectorAll(".plantilla").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute("data-plantilla") === k));
@@ -565,6 +665,16 @@
     plano.width = DW; plano.height = DH;
     construirTextos(p);
     document.getElementById("aviso-completo").hidden = !p.completo;
+    bloqueFotos.hidden = p.fotos === 0;
+    avisoListo.hidden = p.fotos !== 0 || p.textos.length > 0;
+    guiaPersonaje.hidden = !p.personaje;
+    document.getElementById("titulo-fotos").textContent = p.personaje ? "Sube tu personaje" : p.fotos > 1 ? "Sube tus fotos" : "Sube tu foto";
+    if (p.personaje) {
+      guiaPersonaje.querySelector(".guia-bien").src = p.ruta + p.personaje.guia_bien;
+      guiaPersonaje.querySelector(".guia-mal").src = p.ruta + p.personaje.guia_mal;
+    }
+    document.getElementById("paso-texto-n").textContent = p.fotos === 0 ? "2" : "3";
+    try { history.replaceState(null, "", "?diseno=" + encodeURIComponent(k)); } catch (e) {}
     activarFoto(estado.activa);
     if (p.capas && !p.cargado) {
       prepararImagenes(p).then(function () { p.cargado = true; if (estado.plantilla === k) redibujar(); });
@@ -587,6 +697,7 @@
       cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
       URL.revokeObjectURL(url);
       estado.fotos[i] = { img: cv, zoom: 1, px: 0.5, py: 0.5, nombre: archivo.name };
+      if (PLANTILLAS[estado.plantilla].personaje) recortarPersonaje(estado.fotos[i]);
       // con varias fotos, pasa sola a la siguiente que falte
       var p = PLANTILLAS[estado.plantilla], sig = i;
       for (var k = 1; k <= p.fotos; k++) {
@@ -598,6 +709,68 @@
     im.onerror = function () { nombreFoto.textContent = "No pudimos abrir esa imagen. Prueba con otra."; };
     im.src = url;
   }
+
+  /* ---------- quitar fondo liso (sin servicios externos) ----------
+     Si la imagen ya trae transparencia, se usa tal cual. Si no, se toma el color de los bordes
+     y se borra por relleno desde afuera todo lo que se le parezca. Funciona con fondos de un color. */
+  function recortarPersonaje(f) {
+    var src = f.img, W = src.width, H = src.height;
+    var esc = Math.min(1, 1400 / Math.max(W, H));
+    var w = Math.max(1, Math.round(W * esc)), h = Math.max(1, Math.round(H * esc));
+    var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    var cx = cv.getContext("2d"); cx.drawImage(src, 0, 0, w, h);
+    var data = cx.getImageData(0, 0, w, h), d = data.data;
+    var transp = 0, borde = [];
+    for (var x = 0; x < w; x++) { borde.push(x, (h - 1) * w + x); }
+    for (var y = 0; y < h; y++) { borde.push(y * w, y * w + w - 1); }
+    borde.forEach(function (k) { if (d[k * 4 + 3] < 200) transp++; });
+    f.traiaTransparencia = transp > borde.length * 0.5;
+    if (inFondo.checked && !f.traiaTransparencia) {
+      // color de fondo: el más repetido en el borde (cuantizado)
+      var cuenta = {}, mejor = null, nm = 0;
+      borde.forEach(function (k) {
+        var q = (d[k * 4] >> 4) + "," + (d[k * 4 + 1] >> 4) + "," + (d[k * 4 + 2] >> 4);
+        cuenta[q] = (cuenta[q] || 0) + 1;
+        if (cuenta[q] > nm) { nm = cuenta[q]; mejor = k; }
+      });
+      var fr = d[mejor * 4], fg = d[mejor * 4 + 1], fb = d[mejor * 4 + 2];
+      var tol = parseFloat(inTolerancia.value), tol2 = tol * tol, suave2 = (tol * 1.6) * (tol * 1.6);
+      var visto = new Uint8Array(w * h), pila = [];
+      function dist2(k) { var a = d[k * 4] - fr, b = d[k * 4 + 1] - fg, c = d[k * 4 + 2] - fb; return a * a + b * b + c * c; }
+      borde.forEach(function (k) { if (!visto[k] && dist2(k) <= suave2) { visto[k] = 1; pila.push(k); } });
+      while (pila.length) {
+        var k = pila.pop(), dd = dist2(k);
+        // dentro de la tolerancia: transparente; en el borde de la tolerancia: semitransparente (antialias)
+        var a = dd <= tol2 ? 0 : Math.min(1, (Math.sqrt(dd) - tol) / (tol * 0.6));
+        d[k * 4 + 3] = Math.round(d[k * 4 + 3] * a);
+        if (dd > tol2) continue;
+        var px = k % w, py = (k / w) | 0;
+        if (px > 0 && !visto[k - 1] && dist2(k - 1) <= suave2) { visto[k - 1] = 1; pila.push(k - 1); }
+        if (px < w - 1 && !visto[k + 1] && dist2(k + 1) <= suave2) { visto[k + 1] = 1; pila.push(k + 1); }
+        if (py > 0 && !visto[k - w] && dist2(k - w) <= suave2) { visto[k - w] = 1; pila.push(k - w); }
+        if (py < h - 1 && !visto[k + w] && dist2(k + w) <= suave2) { visto[k + w] = 1; pila.push(k + w); }
+      }
+      cx.putImageData(data, 0, 0);
+    }
+    // recorta al contenido visible
+    var x0 = w, y0 = h, x1 = -1, y1 = -1, dd2 = cx.getImageData(0, 0, w, h).data;
+    for (var yy = 0; yy < h; yy++) for (var xx = 0; xx < w; xx++) {
+      if (dd2[(yy * w + xx) * 4 + 3] > 24) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+    }
+    if (x1 < x0) { x0 = 0; y0 = 0; x1 = w - 1; y1 = h - 1; }
+    var out = document.createElement("canvas"); out.width = x1 - x0 + 1; out.height = y1 - y0 + 1;
+    out.getContext("2d").drawImage(cv, x0, y0, out.width, out.height, 0, 0, out.width, out.height);
+    f.recorte = out;
+    var nota = document.getElementById("nota-fondo");
+    nota.textContent = f.traiaTransparencia ? "Tu imagen ya venía sin fondo." :
+      inFondo.checked ? "Quitamos el fondo. Si se borró parte del personaje, baja la sensibilidad." : "Fondo original.";
+  }
+  [inFondo, inTolerancia].forEach(function (el) {
+    el.addEventListener("input", function () {
+      var f = estado.fotos[0];
+      if (f && f.img && PLANTILLAS[estado.plantilla].personaje) { recortarPersonaje(f); redibujar(); }
+    });
+  });
 
   inFoto.addEventListener("change", function () { leerFoto(inFoto.files[0]); inFoto.value = ""; });
   ["dragenter", "dragover"].forEach(function (ev) {
@@ -626,8 +799,9 @@
       document.querySelectorAll("[data-vista]").forEach(function (o) {
         o.setAttribute("aria-pressed", String(o === b));
       });
-      salida.hidden = v !== "taza";
+      salida.hidden = v === "plano";
       vistaPlano.hidden = v !== "plano";
+      usarVista(v);
     });
   });
 
@@ -643,11 +817,12 @@
   }
   function mensajePedido() {
     var p = PLANTILLAS[estado.plantilla];
-    var m = "Hola Anime Emporium, quiero una taza personalizada.\nPrediseño: " + p.nombre;
+    var m = "Hola Anime Emporium, quiero una taza" + (p.fotos === 0 ? "" : " personalizada") + ".\n" +
+      (p.fotos === 0 ? "Diseño: " : "Prediseño: ") + p.nombre + " (" + estado.plantilla + ")";
     p.textos.forEach(function (t, i) { m += "\n" + t.etiqueta + ": " + texto(i); });
     var faltan = 0;
     for (var i = 0; i < p.fotos; i++) if (!estado.fotos[i] || !estado.fotos[i].img) faltan++;
-    if (faltan) m += "\n(Me faltan " + faltan + (faltan === 1 ? " foto" : " fotos") + ", te las envío por aquí.)";
+    if (faltan && !p.personaje) m += "\n(Me faltan " + faltan + (faltan === 1 ? " foto" : " fotos") + ", te las envío por aquí.)";
     m += "\nTe envío la imagen del diseño.";
     return m;
   }
@@ -687,15 +862,21 @@
   fetch("data/predisenos.json").then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
     .then(function (lista) {
       // primero los prediseños de la tienda, después los dibujados
+      lista.sort(function (a, b) { return (b.fotos > 0) - (a.fotos > 0); });
       lista.forEach(function (p) { PLANTILLAS[p.id] = p; ORDEN.push(p.id); });
       Object.keys(PLANTILLAS).forEach(function (k) { if (ORDEN.indexOf(k) === -1) ORDEN.push(k); });
+      var q = new URLSearchParams(location.search);
+      var pedido = q.get("diseno"), cat = q.get("categoria");
+      if (pedido && PLANTILLAS[pedido]) filtro.categoria = (PLANTILLAS[pedido].fotos > 0 ? CON_FOTO : (PLANTILLAS[pedido].categorias || [TODOS])[0]);
+      if (cat) filtro.categoria = cat;
       construirPlantillas();
-      elegirPlantilla(ORDEN[0]);
+      var primero = ORDEN.filter(function (k) { return pasaFiltro(PLANTILLAS[k]); })[0] || ORDEN[0];
+      elegirPlantilla(pedido && PLANTILLAS[pedido] ? pedido : primero);
+      var sel = chipsPlantilla.querySelector('[aria-pressed="true"]');
+      if (sel && pedido) sel.scrollIntoView({ block: "nearest" });
       return listasFuentes;
     })
     .then(function () { miniaturasDibujadas(); redibujar(); });
 
-  prepararMapa().then(redibujar).catch(function () {
-    document.getElementById("error-mapa").hidden = false;
-  });
+  usarVista("lados");
 })();
