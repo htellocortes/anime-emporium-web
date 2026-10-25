@@ -11,10 +11,12 @@
   "textos": [
    {
     "tipo": "frase",
-    "etiqueta": "Número",
+    "etiqueta": "Número de Pokédex",
     "ejemplo": "002",
     "patron": "^(.+)$",
     "max_largo": 4,
+    "numerico": true,
+    "ayuda": "Escribe el número de tu Pokémon en la Pokédex, por ejemplo 025 para Pikachu. Si lo dejas vacío, queda el 002.",
     "partes": [
      {
       "x": 1864.2,
@@ -1292,6 +1294,483 @@
    }
   ],
   "ruta": "assets/predisenos/harry-potter/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-ya-son",
+  "nombre": "Esta taza es el principio de un año genial",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Edad",
+    "ejemplo": "25",
+    "patron": "^(.+)$",
+    "ayuda": "Los años que cumple. Si lo dejas vacío, queda el número original.",
+    "max_largo": 3,
+    "numerico": true,
+    "partes": [
+     {
+      "x": 801.5,
+      "y": 877.8,
+      "max": 148.0,
+      "tam": 145,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#18a99e",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 742.3,
+      "y": 811.9
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-ya-son/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-alegria",
+  "nombre": "Alegría en tu día",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-alegria/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-que-cumplas",
+  "nombre": "Y que cumplas muchos más",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [],
+  "capas": [
+   {
+    "color": "#ffffff"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       1673.8,
+       228.3
+      ],
+      [
+       2222.0,
+       228.3
+      ],
+      [
+       2222.0,
+       892.5
+      ],
+      [
+       1673.8,
+       892.5
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-que-cumplas/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-la-vida-comienza",
+  "nombre": "La vida comienza a los…",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Edad",
+    "ejemplo": "29",
+    "patron": "^(.+)$",
+    "ayuda": "Los años que cumple. Si lo dejas vacío, queda el número original.",
+    "max_largo": 3,
+    "numerico": true,
+    "partes": [
+     {
+      "x": 730.1,
+      "y": 507.3,
+      "max": 692.8,
+      "tam": 576,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#6c0ce0",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c1.webp",
+      "x": 452.9,
+      "y": 245.4
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "color": "#ffffff"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       1386.9,
+       68.4
+      ],
+      [
+       2279.4,
+       68.4
+      ],
+      [
+       2279.4,
+       995.0
+      ],
+      [
+       1386.9,
+       995.0
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0
+   },
+   {
+    "texto": 0
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-la-vida-comienza/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-amiga",
+  "nombre": "Feliz cumple amiga",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Para",
+    "ejemplo": "AMIGA",
+    "patron": "^(.+)$",
+    "ayuda": "Por ejemplo AMIGA, HERMANA o PRIMA.",
+    "max_largo": 12,
+    "numerico": false,
+    "partes": [
+     {
+      "x": 1794.1,
+      "y": 659.9,
+      "max": 648.6,
+      "tam": 187,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#ee065f",
+      "mayus": true
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 1534.6,
+      "y": 576.2
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-amiga/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-mamita",
+  "nombre": "Feliz cumpleaños Mamita",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Para",
+    "ejemplo": "Mamita",
+    "patron": "^(.+)$",
+    "ayuda": "El nombre o cómo le dices. Si lo dejas vacío, queda «Mamita».",
+    "max_largo": 14,
+    "numerico": false,
+    "partes": [
+     {
+      "x": 1212.9,
+      "y": 553.1,
+      "max": 517.3,
+      "tam": 124,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#ffffff",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 1006.0,
+      "y": 496.9
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-mamita/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-felices-papa",
+  "nombre": "Felices años papá",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 0,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Edad",
+    "ejemplo": "45",
+    "patron": "^(.+)$",
+    "ayuda": "Los años que cumple. Si lo dejas vacío, queda el número original.",
+    "max_largo": 3,
+    "numerico": true,
+    "partes": [
+     {
+      "x": 1221.5,
+      "y": 561.0,
+      "max": 373.9,
+      "tam": 216,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#ffffff",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c0.webp",
+      "x": 1071.9,
+      "y": 462.7
+     }
+    ]
+   },
+   {
+    "tipo": "frase",
+    "etiqueta": "Texto de la cinta",
+    "ejemplo": "Años... PAPÁ",
+    "patron": "^(.+)$",
+    "ayuda": "Por ejemplo «Años... MAMÁ» o «Años... ABUELO».",
+    "max_largo": 18,
+    "numerico": false,
+    "partes": [
+     {
+      "x": 1226.4,
+      "y": 747.8,
+      "max": 594.2,
+      "tam": 189,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#ffffff",
+      "mayus": true
+     }
+    ],
+    "originales": [
+     {
+      "img": "c1.webp",
+      "x": 903.4,
+      "y": 661.7
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "img": "fondo.jpg"
+   },
+   {
+    "texto": 0
+   },
+   {
+    "texto": 1
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-felices-papa/",
+  "miniatura": "miniatura.jpg"
+ },
+ {
+  "id": "cumple-felices-21",
+  "nombre": "Felices años con tu foto",
+  "categorias": [
+   "Cumpleaños"
+  ],
+  "ancho": 2442,
+  "alto": 1100,
+  "fotos": 1,
+  "textos": [
+   {
+    "tipo": "frase",
+    "etiqueta": "Edad",
+    "ejemplo": "21",
+    "patron": "^(.+)$",
+    "ayuda": "Los años que cumple. Si lo dejas vacío, queda el número original.",
+    "max_largo": 3,
+    "numerico": true,
+    "partes": [
+     {
+      "x": 1693.3,
+      "y": 627.5,
+      "max": 360.2,
+      "tam": 333,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#42291d",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c1.webp",
+      "x": 1549.3,
+      "y": 476.1
+     }
+    ]
+   },
+   {
+    "tipo": "frase",
+    "etiqueta": "Nombre",
+    "ejemplo": "Sofia",
+    "patron": "^(.+)$",
+    "ayuda": "El nombre que va en la cinta.",
+    "max_largo": 12,
+    "numerico": false,
+    "partes": [
+     {
+      "x": 829.6,
+      "y": 926.6,
+      "max": 337.3,
+      "tam": 161,
+      "fuente": "{t}px 'Lilita One', sans-serif",
+      "color": "#663e31",
+      "mayus": false
+     }
+    ],
+    "originales": [
+     {
+      "img": "c2.webp",
+      "x": 694.7,
+      "y": 853.4
+     }
+    ]
+   }
+  ],
+  "capas": [
+   {
+    "color": "#ffffff"
+   },
+   {
+    "foto": 0,
+    "forma": {
+     "tipo": "caja",
+     "pts": [
+      [
+       170.9,
+       109.9
+      ],
+      [
+       966.9,
+       109.9
+      ],
+      [
+       966.9,
+       993.8
+      ],
+      [
+       170.9,
+       993.8
+      ]
+     ]
+    }
+   },
+   {
+    "img": "c0.webp",
+    "x": 0.0,
+    "y": 0.0
+   },
+   {
+    "texto": 0
+   },
+   {
+    "texto": 1
+   }
+  ],
+  "ruta": "assets/predisenos/cumple-felices-21/",
   "miniatura": "miniatura.jpg"
  },
  {

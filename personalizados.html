@@ -56,58 +56,101 @@
           <p class="dis-nota" id="error-mapa" hidden>No pudimos cargar la vista 3D. Revisa el diseño plano o recarga la página.</p>
         </div>
 
-        <div class="dis-controles">
-          <fieldset class="paso">
-            <legend><span class="paso-n">1</span> Elige un prediseño</legend>
-            <div class="chips categorias" id="categorias" role="group" aria-label="Categorías"></div>
-            <div class="plantillas" id="plantillas"></div>
-            <p class="dis-nota" id="aviso-completo" hidden>Usa esta opción si ya tienes tu diseño listo. Recomendamos una imagen horizontal de 2000 × 1100 px.</p>
-            <div class="pedir-diseno">
-              <p><strong>¿No encuentras el apropiado?</strong> Solicítanos uno y nosotros lo diseñamos.</p>
-              <a class="btn btn-sec" data-wsp="Hola Anime Emporium, no encontré el prediseño que buscaba. Quiero que me diseñen una taza para: " href="#" target="_blank" rel="noopener">Solicitar un diseño</a>
-            </div>
-          </fieldset>
-
-          <p class="aviso-listo" id="aviso-listo" hidden>Este es un <strong>diseño listo</strong>: no necesitas subir nada. Pídelo tal cual o escríbenos si quieres agregarle un nombre.</p>
-
-          <fieldset class="paso" id="bloque-fotos">
-            <legend><span class="paso-n">2</span> <span id="titulo-fotos">Sube tus fotos</span></legend>
-            <div class="guia-personaje" id="guia-personaje" hidden>
-              <p>Sube una imagen de tu personaje con <strong>fondo blanco o de un solo color</strong>, o un PNG sin fondo. Así lo recortamos solo.</p>
-              <div class="guia-ejemplos">
-                <figure class="bien"><img class="guia-bien" alt="Ejemplo correcto: personaje con fondo blanco" width="260" height="246"><figcaption>Así sí: fondo liso</figcaption></figure>
-                <figure class="mal"><img class="guia-mal" alt="Ejemplo incorrecto: personaje sobre un paisaje" width="260" height="246"><figcaption>Así no: con paisaje</figcaption></figure>
+        <div class="dis-controles acordeon" id="acordeon">
+          <section class="paso" data-paso="diseno">
+            <button type="button" class="paso-cab" aria-expanded="true" aria-controls="cuerpo-diseno">
+              <span class="paso-n">1</span>
+              <span class="paso-tit">Elige tu diseño<small class="paso-resumen" id="resumen-diseno"></small></span>
+              <svg class="paso-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="paso-cuerpo" id="cuerpo-diseno">
+              <div class="grupos" id="grupos" role="tablist" aria-label="Tipo de diseño"></div>
+              <div class="chips subcategorias" id="subcategorias" role="group" aria-label="Categoría" hidden></div>
+              <div class="plantillas" id="plantillas"></div>
+              <p class="dis-nota" id="aviso-completo" hidden>Usa esta opción si ya tienes tu diseño listo. Recomendamos una imagen horizontal de 2000 × 1100 px.</p>
+              <div class="pedir-diseno">
+                <p><strong>¿No encuentras el apropiado?</strong> Solicítanos uno y nosotros lo diseñamos.</p>
+                <a class="btn btn-sec" data-wsp="Hola Anime Emporium, no encontré el prediseño que buscaba. Quiero que me diseñen una taza para: " href="#" target="_blank" rel="noopener">Solicitar un diseño</a>
               </div>
             </div>
-            <div class="chips selector-fotos" id="selector-fotos" role="group" aria-label="Foto que estás editando" hidden></div>
-            <label class="zona-foto" id="zona-foto" for="foto">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 4 4 3-3 5 5"/><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/></svg>
-              <span id="texto-zona"><strong>Elige una foto</strong> o arrástrala aquí</span>
-              <small id="nombre-foto">JPG o PNG. Tu foto no sale de tu dispositivo hasta que tú nos la envíes.</small>
-            </label>
-            <input type="file" id="foto" accept="image/*" class="oculto">
-            <div class="ajustes" id="ajuste-fondo" hidden>
-              <label class="check" for="quitar-fondo"><input type="checkbox" id="quitar-fondo" checked> Quitar el fondo automáticamente</label>
-              <label for="tolerancia">Sensibilidad <input type="range" id="tolerancia" min="10" max="120" step="1" value="48"></label>
-              <small class="dis-nota" id="nota-fondo"></small>
-            </div>
-            <div class="ajustes" id="ajustes-foto" hidden>
-              <label for="zoom">Tamaño <input type="range" id="zoom" min="1" max="3" step="0.01" value="1"></label>
-              <label for="pos-x">Mover a los lados <input type="range" id="pos-x" min="0" max="1" step="0.01" value="0.5"></label>
-              <label for="pos-y">Mover arriba o abajo <input type="range" id="pos-y" min="0" max="1" step="0.01" value="0.5"></label>
-            </div>
-          </fieldset>
+          </section>
 
-          <fieldset class="paso" id="bloque-textos">
-            <legend><span class="paso-n" id="paso-texto-n">3</span> Escribe tu mensaje</legend>
-            <div class="campos-texto" id="campos-texto"></div>
-          </fieldset>
+          <section class="paso" data-paso="color">
+            <button type="button" class="paso-cab" aria-expanded="false" aria-controls="cuerpo-color">
+              <span class="paso-n">2</span>
+              <span class="paso-tit">Elige el color de tu taza<small class="paso-resumen" id="resumen-color"></small></span>
+              <svg class="paso-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="paso-cuerpo" id="cuerpo-color" hidden>
+              <p class="dis-nota">Color del asa y del interior. El exterior siempre es blanco, porque ahí va el diseño.</p>
+              <div class="colores" id="colores" role="radiogroup" aria-label="Color del asa y del interior"></div>
+              <button type="button" class="btn btn-pri seguir" data-seguir>Continuar</button>
+            </div>
+          </section>
 
-          <div class="dis-acciones">
-            <button type="button" class="btn btn-wsp" id="btn-pedir">Pedir esta taza por WhatsApp</button>
-            <button type="button" class="btn btn-sec" id="btn-descargar">Descargar diseño</button>
-            <p class="dis-nota" id="estado-accion" aria-live="polite">Te confirmamos el diseño final y el precio por WhatsApp antes de imprimir.</p>
-          </div>
+          <section class="paso" data-paso="fotos">
+            <button type="button" class="paso-cab" aria-expanded="false" aria-controls="cuerpo-fotos">
+              <span class="paso-n">3</span>
+              <span class="paso-tit"><span id="titulo-fotos">Sube tus fotos</span><small class="paso-resumen" id="resumen-fotos"></small></span>
+              <svg class="paso-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="paso-cuerpo" id="cuerpo-fotos" hidden>
+              <div class="guia-personaje" id="guia-personaje" hidden>
+                <p>Sube una imagen de tu personaje con <strong>fondo blanco o de un solo color</strong>, o un PNG sin fondo. Así lo recortamos solo.</p>
+                <div class="guia-ejemplos">
+                  <figure class="bien"><img class="guia-bien" alt="Ejemplo correcto: personaje con fondo blanco" width="260" height="246"><figcaption>Así sí: fondo liso</figcaption></figure>
+                  <figure class="mal"><img class="guia-mal" alt="Ejemplo incorrecto: personaje sobre un paisaje" width="260" height="246"><figcaption>Así no: con paisaje</figcaption></figure>
+                </div>
+              </div>
+              <div class="chips selector-fotos" id="selector-fotos" role="group" aria-label="Foto que estás editando" hidden></div>
+              <label class="zona-foto" id="zona-foto" for="foto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 4 4 3-3 5 5"/><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/></svg>
+                <span id="texto-zona"><strong>Elige una foto</strong> o arrástrala aquí</span>
+                <small id="nombre-foto">JPG o PNG. Tu foto no sale de tu dispositivo hasta que tú nos la envíes.</small>
+              </label>
+              <input type="file" id="foto" accept="image/*" class="oculto">
+              <div class="ajustes" id="ajuste-fondo" hidden>
+                <label class="check" for="quitar-fondo"><input type="checkbox" id="quitar-fondo" checked> Quitar el fondo automáticamente</label>
+                <label for="tolerancia">Sensibilidad <input type="range" id="tolerancia" min="10" max="120" step="1" value="48"></label>
+                <small class="dis-nota" id="nota-fondo"></small>
+              </div>
+              <div class="ajustes" id="ajustes-foto" hidden>
+                <label for="zoom">Tamaño <input type="range" id="zoom" min="1" max="3" step="0.01" value="1"></label>
+                <label for="pos-x">Mover a los lados <input type="range" id="pos-x" min="0" max="1" step="0.01" value="0.5"></label>
+                <label for="pos-y">Mover arriba o abajo <input type="range" id="pos-y" min="0" max="1" step="0.01" value="0.5"></label>
+              </div>
+              <button type="button" class="btn btn-pri seguir" data-seguir>Continuar</button>
+            </div>
+          </section>
+
+          <section class="paso" data-paso="texto">
+            <button type="button" class="paso-cab" aria-expanded="false" aria-controls="cuerpo-texto">
+              <span class="paso-n">4</span>
+              <span class="paso-tit"><span id="titulo-texto">Escribe tu mensaje</span><small class="paso-resumen" id="resumen-texto"></small></span>
+              <svg class="paso-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="paso-cuerpo" id="cuerpo-texto" hidden>
+              <div class="campos-texto" id="campos-texto"></div>
+              <button type="button" class="btn btn-pri seguir" data-seguir>Continuar</button>
+            </div>
+          </section>
+
+          <section class="paso" data-paso="pedir">
+            <button type="button" class="paso-cab" aria-expanded="false" aria-controls="cuerpo-pedir">
+              <span class="paso-n">5</span>
+              <span class="paso-tit">Revisa y pide tu taza</span>
+              <svg class="paso-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="paso-cuerpo" id="cuerpo-pedir" hidden>
+              <p class="aviso-listo" id="aviso-listo" hidden>Este es un <strong>diseño listo</strong>: no necesitas subir nada. Pídelo tal cual o escríbenos si quieres agregarle un nombre.</p>
+              <dl class="resumen-pedido" id="resumen-pedido"></dl>
+              <div class="dis-acciones">
+                <button type="button" class="btn btn-wsp" id="btn-pedir">Pedir esta taza por WhatsApp</button>
+                <button type="button" class="btn btn-sec" id="btn-descargar">Descargar diseño</button>
+                <p class="dis-nota" id="estado-accion" aria-live="polite">Te confirmamos el diseño final y el precio por WhatsApp antes de imprimir.</p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

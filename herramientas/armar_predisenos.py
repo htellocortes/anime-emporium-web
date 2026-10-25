@@ -265,7 +265,8 @@ def armar_personaje(ruta, ident, nombre, categorias, grande, mini, debajo_mini, 
     if numero:
         c = a.capa(numero); l, t, r, b = c.caja
         orig = guardar_capa(a, c)
-        a.texto({"tipo": "frase", "etiqueta": "Número", "ejemplo": "002", "patron": "^(.+)$", "max_largo": 4,
+        a.texto({"tipo": "frase", "etiqueta": "Número de Pokédex", "ejemplo": "002", "patron": "^(.+)$", "max_largo": 4, "numerico": True,
+                 "ayuda": "Escribe el número de tu Pokémon en la Pokédex, por ejemplo 025 para Pikachu. Si lo dejas vacío, queda el 002.",
                  "partes": [{"x": a.esc((l + r) / 2), "y": a.esc((t + b) / 2), "max": a.esc((r - l) * 1.6),
                              "tam": round((b - t) * 1.25 * a.s), "fuente": "800 {t}px 'Nunito', sans-serif",
                              "color": color_capa(c), "mayus": False}],
@@ -395,6 +396,51 @@ def armar_fijo(ruta, ident, nombre, categorias):
             "fotos": 0, "textos": [], "capas": [{"img": "fondo.jpg"}], "ruta": f"assets/predisenos/{ident}/", "listo": True}
 
 
+def armar_editable(ruta, ident, nombre, categorias, editables=(), hueco=False, hueco_capa=None):
+    """Diseños con capas de texto separadas: algunas capas (edad, nombre) pasan a ser editables.
+    Si se deja vacío el campo, se ve la capa original. hueco=True abre los marcos blancos para una foto.
+    editables: lista de dicts {capa, etiqueta, fuente, ayuda?, numerico?, max_largo?}."""
+    a = Armador(ruta, ident, nombre, categorias)
+    quitar = {e["capa"] for e in editables}
+    fondo = componer(a.info, [c for c in a.capas if c.nombre not in quitar])
+    fondo_rgb = (np.clip(fondo[..., :3] * fondo[..., 3:4] + (1 - fondo[..., 3:4]), 0, 1) * 255).astype(np.uint8)
+    if hueco:
+        H, W = fondo_rgb.shape[:2]
+        blanco = (fondo_rgb.min(-1) >= 246).astype(np.uint8)
+        if hueco_capa:
+            # el hueco es el interior transparente del marco (más confiable que el blanco)
+            m = capa_rgba_doc(a, a.capa(hueco_capa))[..., 3]
+            blanco = hueco_interior(m) * blanco
+        n, lab, st, _ = cv2.connectedComponentsWithStats(blanco)
+        huecos = []
+        for k in range(1, n):
+            x, y, w, h, area = st[k]
+            if area < 0.03 * W * H or x == 0 or y == 0 or x + w >= W or y + h >= H:
+                continue
+            huecos.append((x, suavizar_mascara(lab == k, 5, 3)))
+        tot = np.zeros((H, W), np.uint8)
+        for _, h in sorted(huecos, key=lambda t: t[0]):
+            guardar_con_hueco(a, fondo_rgb, h); tot |= h
+        alfa = 1 - cv2.GaussianBlur(tot.astype(np.float32), (5, 5), 0)
+        alfa = np.minimum(alfa, 1 - (cv2.erode(tot, np.ones((3, 3), np.uint8)) > 0))
+        a.lista.insert(0, {"color": "#ffffff"})
+        a.recorte(np.dstack([fondo_rgb.astype(np.float32) / 255, alfa]), 0, 0)
+    else:
+        a.imagen_completa(fondo)
+    for e in editables:
+        c = a.capa(e["capa"]); l, t, r, b = c.caja
+        orig = guardar_capa(a, c)
+        texto_capa = e.get("ejemplo", e["capa"]).strip()
+        a.texto({"tipo": "frase", "etiqueta": e["etiqueta"], "ejemplo": texto_capa, "patron": "^(.+)$",
+                 "ayuda": e.get("ayuda", "Si lo dejas vacío, queda el texto original."),
+                 "max_largo": e.get("max_largo", 24), "numerico": e.get("numerico", False),
+                 "partes": [{"x": a.esc((l + r) / 2), "y": a.esc((t + b) / 2), "max": a.esc((r - l) * e.get("ancho", 1.25)),
+                             "tam": round((b - t) * e.get("escala", 1.1) * a.s), "fuente": e["fuente"],
+                             "color": color_capa(c), "mayus": e.get("mayus", False)}],
+                 "originales": [orig]})
+    return a.guardar()
+
+
 def miniaturas(lista, ancho=420):
     """Vista chica de cada prediseño con los huecos de foto en gris, para el selector."""
     from PIL import ImageDraw
@@ -463,6 +509,22 @@ if __name__ == "__main__":
     for f, i, n in [("Naruto_01.psd", "naruto-foto-1", "Naruto con tu foto · Kunai"), ("Naruto_02.psd", "naruto-foto-2", "Naruto con tu foto · Shippuden"), ("Naruto_03.psd", "naruto-foto-3", "Naruto con tu foto · Manga")]:
         con_foto.append((armar_compuesta_con_foto, (P(f), i, n, ["Naruto"]), {}))
     con_foto.append((armar_marco, (P("harry.psd"), "harry-potter", "Mundo mágico", ["Películas y series"]), dict(foto="foto", marco_desde="Rectángulo 1", forma_tipo="rect_capa")))
+
+    # Cumpleaños: edad y nombre editables
+    LIL = "{t}px 'Lilita One', sans-serif"; DAN = "700 {t}px 'Dancing Script', cursive"
+    EDAD = dict(etiqueta="Edad", fuente=LIL, numerico=True, max_largo=3, ayuda="Los años que cumple. Si lo dejas vacío, queda el número original.")
+    cumple = [
+        ("TAZA_2016_CUMPLEA_OS_11.psd", "cumple-ya-son", "Esta taza es el principio de un año genial", [dict(EDAD, capa="25")], False),
+        ("TAZA_2016_CUMPLEA_OS_12.psd", "cumple-alegria", "Alegría en tu día", [], False),
+        ("TAZA_2016_CUMPLEA_OS_13.psd", "cumple-que-cumplas", "Y que cumplas muchos más", [], "MARCO"),
+        ("TAZA_2016_CUMPLEA_OS_22.psd", "cumple-la-vida-comienza", "La vida comienza a los…", [dict(EDAD, capa="29")], True),
+        ("TAZA_2016_CUMPLEA_OS_4.psd", "cumple-amiga", "Feliz cumple amiga", [dict(capa="AMIGA", etiqueta="Para", fuente=LIL, mayus=True, max_largo=12, ayuda="Por ejemplo AMIGA, HERMANA o PRIMA.")], False),
+        ("TAZA_2016_CUMPLEA_OS_5.psd", "cumple-mamita", "Feliz cumpleaños Mamita", [dict(capa="Mamita", etiqueta="Para", fuente=LIL, max_largo=14, ayuda="El nombre o cómo le dices. Si lo dejas vacío, queda «Mamita».")], False),
+        ("TAZA_2016_CUMPLEA_OS_6.psd", "cumple-felices-papa", "Felices años papá", [dict(EDAD, capa="45"), dict(capa="Años... PAPÁ", ejemplo="Años... PAPÁ", etiqueta="Texto de la cinta", fuente=LIL, mayus=True, max_largo=18, ancho=0.92, ayuda="Por ejemplo «Años... MAMÁ» o «Años... ABUELO».")], False),
+        ("TAZA_2016_CUMPLEA_OS_7.psd", "cumple-felices-21", "Felices años con tu foto", [dict(EDAD, capa="21"), dict(capa="Sofia", etiqueta="Nombre", fuente=LIL, max_largo=12, ayuda="El nombre que va en la cinta.")], True),
+    ]
+    for f, i, n, ed, hu in cumple:
+        con_foto.append((armar_editable, (P(f), i, n, ["Cumpleaños"]), dict(editables=ed, hueco=bool(hu), hueco_capa=hu if isinstance(hu, str) else None)))
 
     # Diseños listos: cada archivo dentro de listos/<Categoría>/ (psd, jpg o png). El nombre del archivo es el nombre del diseño.
     listos = []

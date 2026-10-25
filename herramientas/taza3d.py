@@ -308,7 +308,10 @@ def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None, c
     vin = 1 - 0.55 * (((xx - .5) / .75) ** 2 + ((yy - .48) / .7) ** 2)
     K = np.clip(vin, 0.25, 1) * 1.05
     if mapas:
-        guardar_mapas(mapas, N, g, imp, ux, vy, luz, espec, K)
+        # partes de color: asa, e interior con el borde superior
+        es_asa = asa < cu
+        es_int = (~es_asa) & ((rad < R - T * 0.6) | (ly > H - RND * 1.6))
+        guardar_mapas(mapas, N, g, imp, ux, vy, luz, espec, K, es_asa, es_int)
     img = img * K[..., None]
     img = img / (1 + 0.22 * img)                 # compresión suave de altas luces
     img = lineal_a_srgb(img)
@@ -316,7 +319,7 @@ def render(diseno_rgba, salida, fondo="morado", una=False, N=1200, mapas=None, c
     out.save(salida, quality=90, optimize=True, progressive=True)
 
 
-def guardar_mapas(carpeta, N, g, imp, ux, vy, luz, espec, K):
+def guardar_mapas(carpeta, N, g, imp, ux, vy, luz, espec, K, es_asa=None, es_int=None):
     """Mapas para el diseñador web: con ellos el navegador pinta cualquier diseño sobre la taza.
     color = tono(A * lineal(diseño(u, v)) + B), mezclado con base.jpg según la cobertura."""
     import os, json
@@ -354,6 +357,13 @@ def guardar_mapas(carpeta, N, g, imp, ux, vy, luz, espec, K):
     Image.fromarray(vlo).save(os.path.join(carpeta, "vm.png"), optimize=True)
     Image.fromarray(a8).save(os.path.join(carpeta, "luz.png"), optimize=True)
     Image.fromarray(b8).save(os.path.join(carpeta, "brillo.png"), optimize=True)
+    if es_asa is not None:
+        pa = np.zeros(N * N); pi = np.zeros(N * N)
+        pa[g] = es_asa; pi[g] = es_int
+        def red4(x):
+            return x.reshape(N // 2, 2, N // 2, 2).mean(axis=(1, 3))
+        partes = np.stack([red4(pa.reshape(N, N)), red4(pi.reshape(N, N)), np.zeros((N // 2, N // 2))], -1)
+        Image.fromarray(np.round(partes * 255).astype(np.uint8)).save(os.path.join(carpeta, "partes.png"), optimize=True)
     json.dump({"ancho": n, "x": int(x0), "y": int(y0), "w": int(x1 - x0), "h": int(y1 - y0),
                "escA": escA, "escB": escB, "tono": 0.22,
                # u del mapa = fracción de la vuelta completa; un diseño de proporción a cubre a * k
